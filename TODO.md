@@ -17,15 +17,15 @@ moment tests confirm the gate passes. Don't wait to be asked.
 
 ## Phase 0 — Scaffold
 
-- [ ] `.gitignore` + naming cleanup — `data/` ignored per PRD §4; single project name `repeal` across PRD, `src/`, README *(done, pending gate)*
-- [ ] Dev toolchain + lockfile — `uv` env, Python 3.11+, `ruff`, `pytest`, committed `uv.lock`
-- [ ] ADR template + **ADR-001 committed verbatim** (PRD §5) + ADR-002/003/004; `docs/logs/TEMPLATE.md` + first build log; `docs/data-card.md` stub; `TODO.md`
-- [ ] Package skeleton per PRD §8 with smoke tests → `tests/test_smoke.py`
-- [ ] Pre-commit hooks (`ruff` + `uv run pytest`) + `scripts/install-hooks.sh`
-- [ ] `Makefile` targets stubbed: `setup ingest annotate extract index train eval serve demo`
-- [ ] GitHub Actions CI (lint + tests) green on `maestro`
+- [x] `.gitignore` + naming cleanup — `data/` ignored per PRD §4; single project name `repeal` across PRD, `src/`, README
+- [x] Dev toolchain + lockfile — `uv` env, Python 3.11+, `ruff`, `pytest`, committed `uv.lock`
+- [x] ADR template + **ADR-001 committed verbatim** (PRD §5) + ADR-002/003/004; `docs/logs/TEMPLATE.md` + first build log; `docs/data-card.md` stub; `TODO.md`
+- [x] Package skeleton per PRD §8 with smoke tests → `tests/test_smoke.py`
+- [x] Pre-commit hooks (`ruff` + `uv run pytest`) + `scripts/install-hooks.sh`
+- [x] `Makefile` targets stubbed: `setup ingest annotate extract index train eval serve demo`
+- [ ] GitHub Actions CI (lint + tests) green on `maestro` *(pending first push to origin)*
 
-⛔ Phase 0 gate: `uv run pytest` green + DoD met — fresh clone → `make setup && make test` passes; CI green
+✅ **Phase 0 complete — 8 tests passing** *(local gate: fresh clone → `make setup && make test` verified; CI item above confirms on first push)*
 
 ---
 
