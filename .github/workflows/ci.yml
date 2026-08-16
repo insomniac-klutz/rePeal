@@ -1,0 +1,26 @@
+name: ci
+
+on:
+  push:
+    branches: [maestro]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: install dependencies
+        run: uv sync --group dev
+
+      - name: lint
+        run: uv run ruff check .
+
+      - name: test
+        run: uv run pytest
