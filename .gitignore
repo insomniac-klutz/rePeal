@@ -216,3 +216,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Claude
+.claude/
+
+# Project data (PRD §4: never redistribute raw/modified data)
+data/
