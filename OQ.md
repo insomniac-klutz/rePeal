@@ -353,7 +353,7 @@ no full download yet. The design lives in OQ-1.0; the eleven calls it depends on
 through OQ-1.11, and nothing in Phase 1 spawns until they're ruled. Questions the build
 surfaces get appended below as OQ-1.12 onward, each carrying the building session's tag.
 
-- [ ] OQ-1.0 — Phase 1 design (HLD, proposed 2026-08-16, awaiting owner approval)
+- [x] OQ-1.0 — Phase 1 design (HLD, proposed 2026-08-16, awaiting owner approval)
   **Context.** HLD proposed 2026-08-16 from the recon in the preamble above.
 
   **Objective & gate.** PRD §9: downloader with checksum verification, schema contract test
@@ -580,9 +580,12 @@ surfaces get appended below as OQ-1.12 onward, each carrying the building sessio
   ruling. (c) redesign.
   **Assumed:** (a) — every Phase 1 file plan below is derived from it.
   **Recommendation:** (a).
-  **Ruled:** _pending_ · **Landed:** — · **ROLLER:** —
+  **Ruled 2026-09-09:** owner — (a) approved as proposed. All eleven dependent calls
+  (OQ-1.1–1.11) were ruled the same day exactly as this design assumed; the only open slot
+  is the cutoff year, which OQ-1.5 closes from the candidate table. Phase 1 may spawn.
+  · **Landed:** pending — the Phase 1 build (TODO.md) lands it. · **ROLLER:** — (phase work)
 
-- [ ] OQ-1.1 — Terms posture: does the OPA click-through modal bind this project? (owner call)
+- [x] OQ-1.1 — Terms posture: does the OPA click-through modal bind this project? (owner call)
   **Context.** The dataset carries no license (`license_id: null`, "No License Provided").
   Two documents govern. The CalHHS portal ToU (https://data.chhs.ca.gov/pages/terms, last
   modified 2023-01-27) grants a "non-exclusive, non-transferable, revocable license to use
@@ -630,9 +633,16 @@ surfaces get appended below as OQ-1.12 onward, each carrying the building sessio
   **Recommendation:** (b), with the follow-up verification. It matches what the PRD already
   assumed, every mitigation is already project policy, and it keeps the one genuinely
   irreversible step (commercial positioning) explicitly gated.
-  **Ruled:** _pending_ · **Landed:** — · **ROLLER:** —
+  **Ruled 2026-09-09:** owner — (b) portfolio posture, with the follow-up verification.
+  Noncommercial research use under the portal ToU's modify-with-flagging clause; every
+  derived artifact flagged modified/non-official and cited; no data redistribution;
+  commercial use blocked pending approval. · **Landed:** R-02 done 2026-09-09 — the OPA
+  click-through is portal-wide boilerplate (identical `id="popup"` fragment on the DMHC IMR
+  page, three unrelated organizations' pages and OPA's own; raw-HTTP byte-for-byte match);
+  posture and finding recorded in `docs/data-card.md` (691241c, `update : data card terms posture
+  from oq-1.1`). · **ROLLER:** R-02
 
-- [ ] OQ-1.2 — Category crosswalk: which vocabulary is canonical, and how deep?
+- [x] OQ-1.2 — Category crosswalk: which vocabulary is canonical, and how deep?
   **Context.** The migration and its counts are covered in OQ-1.0 (Hazards, #1). Additional
   trap: near-duplicate labels exist within a vocabulary (`Pregnancy Childbirth` vs
   `Pregnancy/Childbirth`), not just across the legacy/new split.
@@ -654,9 +664,13 @@ surfaces get appended below as OQ-1.12 onward, each carrying the building sessio
   **Recommendation:** (a) + category-level depth, raw labels always preserved in `*_raw`
   columns, map versioned as `category_crosswalk_v1.yaml`, unknown labels pass-through +
   counted.
-  **Ruled:** _pending_ · **Landed:** — · **ROLLER:** —
+  **Ruled 2026-09-09:** owner — (a) canonicalize to the new (ICD-10-chapter-style)
+  vocabulary, category level only in Phase 1; subcategories mechanical cleanup + raw
+  preserved; `*_raw` columns always kept; `category_crosswalk_v1.yaml` versioned; unknown
+  labels pass through and are counted, never errored. · **Landed:** pending — crosswalk +
+  `normalize.py` are Phase 1 work (TODO); the PRD §12 row refinement is R-03. · **ROLLER:** R-03
 
-- [ ] OQ-1.3 — Snapshot policy: pin one dated snapshot for all of v1?
+- [x] OQ-1.3 — Snapshot policy: pin one dated snapshot for all of v1?
   **Context.** Upstream is a periodic full-file republish (whole CSV replaced; last publish
   2026-06-01; `Frequency: "Other"`, no committed cadence; no per-row dates → no incremental
   path — OQ-1.0). Every downstream artifact — gold-set ReferenceIDs (Phase 2), temporal split
@@ -671,9 +685,13 @@ surfaces get appended below as OQ-1.12 onward, each carrying the building sessio
   **Assumed:** (a) — the HLD (OQ-1.0)'s pinned-snapshot invariant is built on it.
   **Recommendation:** (a). Reproducibility is a PRD §3 success criterion; freshness buys
   nothing until Phase 8.
-  **Ruled:** _pending_ · **Landed:** — · **ROLLER:** —
+  **Ruled 2026-09-09:** owner — (a) pin. First `make ingest` records the dated snapshot and
+  its self-computed sha256 in `manifest.json`; re-runs verify and reuse it; refresh is
+  explicit (`make ingest REFRESH=1`) and produces a new dated raw file, a new manifest
+  entry, and deliberate downstream re-runs. · **Landed:** pending — `download.py` + manifest
+  are Phase 1 work (TODO); the PRD §4 wording is R-04. · **ROLLER:** R-04
 
-- [ ] OQ-1.4 — Leakage-protocol classification of the three undocumented fields (OQ-0.1)
+- [x] OQ-1.4 — Leakage-protocol classification of the three undocumented fields (OQ-0.1)
   **Context.** The real CSV carries `IMRType`, `DaysToReview`, `DaysToAdopt` — none in the
   PRD. OQ-0.1's inference-time contract: prediction inputs = information a provider holds at
   denial time. `DaysToReview`/`DaysToAdopt` measure the external review itself — they do not
@@ -693,7 +711,12 @@ surfaces get appended below as OQ-1.12 onward, each carrying the building sessio
   **Assumed:** (a) — the HLD (OQ-1.0)'s schema table (`imr_type` pre-decision pending this
   entry, `days_to_*` post-decision) is built on it.
   **Recommendation:** (a); the ruling here is the record, noted against OQ-0.1.
-  **Ruled:** _pending_ · **Landed:** — · **ROLLER:** —
+  **Ruled 2026-09-09:** owner — (a) ingest all three. `days_to_review`/`days_to_adopt`
+  tagged post-decision in `schema.py` metadata, excluded from every predictor feature set
+  (Phase 5 test enforces), kept for descriptive analytics; `imr_type` pre-decision and
+  prediction-eligible, nuance documented in the model card. · **Landed:** pending —
+  `schema.py` classification is Phase 1 work (TODO); the PRD §5 application note is R-05.
+  · **ROLLER:** R-05
 
 - [ ] OQ-1.5 — Temporal cutoff: decision criteria, and what to do with 2026
   **Context.** PRD's working proposal: train ≤2021 / test 2022+ (→ 10,013 test rows, 23.4%).
@@ -712,9 +735,15 @@ surfaces get appended below as OQ-1.12 onward, each carrying the building sessio
   stability, composition); the ruling on this entry fixes the year, argued from the candidate
   table — working proposal stands unless the table contradicts it. The year is then frozen
   (PRD §9 Phase 5: never re-tuned).
-  **Ruled:** _pending_ · **Landed:** — · **ROLLER:** —
+  **Ruled 2026-09-09 (criteria):** owner — (a): the five criteria above are approved and
+  train ≤2021 / test 2022+ is the working default; `profile.py`'s candidate table
+  (2019–2024) decides the year in a second ruling on this entry, after which it is frozen
+  and never re-tuned. 2026 stays out of both windows, flagged, until a full-year
+  single-vocabulary slice exists; 2001 excluded.
+  **Ruled (year):** _pending the candidate table_ · **Landed:** — · **ROLLER:** — (PRD
+  Phase 5 line updates when the year is frozen)
 
-- [ ] OQ-1.6 — Dataframe contract: pandera, or hand-rolled checks?
+- [x] OQ-1.6 — Dataframe contract: pandera, or hand-rolled checks?
   **Context.** The contract is small — 14 columns, 4 enum domains, 3 casts, nullability
   rules (OQ-1.0, Schema) — but it is the single most load-bearing validation in the project:
   everything downstream trusts the parquet. PRD §7 default: "`pandera` (or pydantic) for
@@ -730,9 +759,12 @@ surfaces get appended below as OQ-1.12 onward, each carrying the building sessio
   **Recommendation:** (a) — the boring choice here is the PRD default. Flip to (b) only if
   pandera's polars support fights us in practice (that experience would be the evidence for
   the ruling).
-  **Ruled:** _pending_ · **Landed:** — · **ROLLER:** —
+  **Ruled 2026-09-09:** owner — (a) pandera with its polars integration; inside the PRD
+  default. Re-rule to (b) only on evidence that pandera's polars support fights us in
+  practice. · **Landed:** pending — `schema.py` is Phase 1 work (TODO); no PRD change.
+  · **ROLLER:** —
 
-- [ ] OQ-1.7 — EDA vehicle: notebook (PRD-literal) or tested module + renderer?
+- [x] OQ-1.7 — EDA vehicle: notebook (PRD-literal) or tested module + renderer?
   **Context.** PRD §9 says "EDA notebook exported to `docs/evals/eda.md`." CLAUDE.md mandates
   strict TDD for every feature; notebooks resist R-G-R and nbconvert drags in the jupyter
   dependency chain for a one-way export. The intent of the PRD line is the report, and the
@@ -749,9 +781,12 @@ surfaces get appended below as OQ-1.12 onward, each carrying the building sessio
   it.
   **Recommendation:** (a), tables-first (no plotting dependency in Phase 1; revisit if
   `eda.md` proves unreadable as tables).
-  **Ruled:** _pending_ · **Landed:** — · **ROLLER:** —
+  **Ruled 2026-09-09:** owner — (a) `profile.py` (pure, tested stat functions) + a
+  renderer writing `docs/evals/eda.md`; no notebook, no jupyter, tables-first, no plotting
+  dependency in Phase 1. · **Landed:** pending — `profile.py` is Phase 1 work (TODO); the
+  PRD §9 Phase 1 wording is R-06. · **ROLLER:** R-06
 
-- [ ] OQ-1.8 — Fixtures: synthetic-only, or a tiny real excerpt?
+- [x] OQ-1.8 — Fixtures: synthetic-only, or a tiny real excerpt?
   **Context.** PRD §8 mentions "fixtures with small synthetic/excerpt samples," but the terms
   (OQ-1.1) prohibit redistributing the data, and a committed excerpt is redistribution. CI has
   no network, so whatever CI verifies must be committed.
@@ -766,9 +801,12 @@ surfaces get appended below as OQ-1.12 onward, each carrying the building sessio
   is built on it.
   **Recommendation:** (a). Realism against the actual corpus is covered by `make ingest`
   validating the real download on every local run.
-  **Ruled:** _pending_ · **Landed:** — · **ROLLER:** —
+  **Ruled 2026-09-09:** owner — (a) synthetic-only: ~60 generated rows, real column names,
+  every enum value, both vocabularies, every flagged pathology; generator committed and
+  derived from `schema.py` constants; no real rows ever committed. · **Landed:** pending —
+  fixture + generator are Phase 1 work (TODO); the PRD §8 wording is R-07. · **ROLLER:** R-07
 
-- [ ] OQ-1.9 — First runtime dependencies
+- [x] OQ-1.9 — First runtime dependencies
   **Context.** `pyproject.toml` has zero runtime deps today. Needed: dataframe + parquet,
   HTTP download, YAML crosswalk, contract library per OQ-1.6. PRD §7 prefers polars.
   **Proposed set.** `polars` (native parquet read/write — no pyarrow needed), `requests`
@@ -778,9 +816,12 @@ surfaces get appended below as OQ-1.12 onward, each carrying the building sessio
   owned by one teammate (`neon-fetcher`) to keep `pyproject.toml`/`uv.lock` single-writer.
   **Assumed:** the proposed set — the HLD (OQ-1.0)'s roster and module list are built on it.
   **Recommendation:** as proposed.
-  **Ruled:** _pending_ · **Landed:** — · **ROLLER:** —
+  **Ruled 2026-09-09:** owner — approved as proposed: `polars`, `requests`, `pyyaml`,
+  `pandera`; no pandas, pyarrow, jupyter or plotting libs; deps single-writer (the
+  downloader teammate). · **Landed:** pending — deps bootstrap is Phase 1 work (TODO); no
+  PRD change. · **ROLLER:** —
 
-- [ ] OQ-1.10 — Upstream drift guard: where does the datastore probe live?
+- [x] OQ-1.10 — Upstream drift guard: where does the datastore probe live?
   **Context.** The live CKAN datastore allows a one-request schema/row-count check without
   downloading 81 MB (OQ-1.0). The 2026 vocabulary migration is exactly the class of silent
   upstream change that should be caught the day it lands. But CI network calls flake, and a
@@ -794,9 +835,13 @@ surfaces get appended below as OQ-1.12 onward, each carrying the building sessio
   (c) In the test suite. Rejected: network in unit tests.
   **Assumed:** (a) — the HLD (OQ-1.0)'s testing/CI split is built on it.
   **Recommendation:** (a) now, (b) once CI on `maestro` is live.
-  **Ruled:** _pending_ · **Landed:** — · **ROLLER:** —
+  **Ruled 2026-09-09:** owner — (a) `make check-upstream` only: manual / before each phase,
+  never in pytest or the commit-blocking CI job. (b), a scheduled non-blocking CI probe, is
+  not ruled in; it can be raised as a new entry once CI on `maestro` is live (OQ-0.7).
+  · **Landed:** pending — Makefile target + probe helper are Phase 1 work (TODO); no PRD
+  change. · **ROLLER:** —
 
-- [ ] OQ-1.11 — Quality-flag set and threshold procedure — sign-off
+- [x] OQ-1.11 — Quality-flag set and threshold procedure — sign-off
   **Context.** Measured reality: `Findings` has 0 nulls but a 1-char minimum (3 rows <100
   chars — OQ-1.0); 39 duplicate-`ReferenceID` rows (OQ-1.0); a clean 691-row 2001–2003 cohort
   missing all demographics (OQ-1.0); typographic-apostrophe UTF-8 text (mojibake possible in
@@ -813,4 +858,6 @@ surfaces get appended below as OQ-1.12 onward, each carrying the building sessio
   is built on it.
   **Recommendation:** approve set + procedure; flags are cheap to add later, expensive to
   retrofit into published artifacts.
-  **Ruled:** _pending_ · **Landed:** — · **ROLLER:** —
+  **Ruled 2026-09-09:** owner — approved as proposed: the eight flag columns, never row
+  drops; thresholds pinned by EDA percentiles and recorded in the data card. · **Landed:**
+  pending — `quality.py` is Phase 1 work (TODO); no PRD change. · **ROLLER:** —
