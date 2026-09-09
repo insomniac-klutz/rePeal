@@ -27,19 +27,19 @@ Verified against the actual download and enforced by a schema contract test in P
 | Field | Notes |
 |---|---|
 | `ReferenceID` | case identifier; the join key for released gold sets |
-| `ReportYear` | used for the temporal split (Phase 5) and the precedent cutoff (ADR-001 amendment) |
+| `ReportYear` | used for the temporal split (Phase 5) and the precedent cutoff (OQ-0.1 amendment) |
 | `DiagnosisCategory` / `DiagnosisSubCategory` | taxonomy drift across 20+ years — normalization map built in Phase 1 EDA, versioned |
 | `TreatmentCategory` / `TreatmentSubCategory` | as above |
 | `Determination` | **the label** — Upheld / Overturned |
 | `Type` | Medical Necessity / Experimental-Investigational / Urgent Care |
 | `AgeRange`, `PatientGender` | de-identified demographics |
-| `Findings` | free-text reviewer narrative, typically a few hundred words — **written after the decision; see ADR-001** |
+| `Findings` | free-text reviewer narrative, typically a few hundred words — **written after the decision; see PRD §5 / OQ-0.1** |
 
 ## Terms & release determination
 
 **Placeholder — IDs + annotations only; determination to be finalized before Phase 2.**
 
-Current working position, per PRD §4 and ADR-004:
+Current working position, per PRD §4 and OQ-0.4:
 
 - The terms permit **noncommercial use without approval** but **prohibit redistributing or
   altering the provided data**. Linking to the source is the distribution mechanism.
@@ -47,7 +47,7 @@ Current working position, per PRD §4 and ADR-004:
   modified data is committed or published.**
 - **Released gold files contain `ReferenceID`s + annotations + a join script only — never
   `Findings` text.** A consumer reproduces the gold set by downloading the source themselves
-  and running the join script (ADR-004).
+  and running the join script (OQ-0.4).
 - The formal terms determination — exact license text, permitted derived-artifact scope, and
   attribution wording — **must be finalized before Phase 2 ships**, since Phase 2 is what
   produces the releasable gold files.
@@ -63,9 +63,9 @@ Current working position, per PRD §4 and ADR-004:
 ## Known caveats
 
 - **Selection bias:** these cases already survived internal appeal. All outputs are framed as
-  *"external-review overturn likelihood"*, not "appeal success likelihood" (ADR-001 §4).
+  *"external-review overturn likelihood"*, not "appeal success likelihood" (PRD §5 item 4).
 - **Post-hoc narrative:** `Findings` frequently states the verdict. It is never a prediction
-  input; see `docs/adr/ADR-001-leakage-protocol.md`.
+  input; see PRD §5 and OQ.md OQ-0.1.
 - **Taxonomy drift** across 20+ years of category labels — normalization map is a Phase 1
   deliverable.
 

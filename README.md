@@ -17,11 +17,12 @@ bash scripts/install-hooks.sh   # install the pre-commit hook (required after a 
 
 - [PRD.md](PRD.md) — product requirements, execution phases, and definitions of done
 - [TODO.md](TODO.md) — phase-by-phase task tracker
-- [docs/adr/](docs/adr/) — architecture decision records (ADR-001 leakage protocol onward)
+- [OQ.md](OQ.md) — every decision, open or ruled, and who made it
+- [ROLLER.md](ROLLER.md) — the rolling backlog of work those rulings produced
 
 ## Notes
 
-Estimates reflect **external-review-stage likelihood only** — these cases already survived internal appeal. Drafts are for professional review, not legal or medical advice. See ADR-001 for the full leakage and selection-bias protocol.
+Estimates reflect **external-review-stage likelihood only** — these cases already survived internal appeal. Drafts are for professional review, not legal or medical advice. See PRD §5 (ruled as OQ-0.1) for the full leakage and selection-bias protocol.
 
 Raw and modified DMHC data is **not redistributed** — see PRD §4. Code is Apache-2.0 ([LICENSE](LICENSE)).
 
