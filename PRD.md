@@ -44,7 +44,7 @@ Initial targets — revise only via an OQ.md ruling, never silently:
 
 ## 4. Data
 
-**Primary corpus:** California DMHC Independent Medical Review (IMR) Determinations — all external-review decisions since 2001-01-01. Tens of thousands of cases; actively updated.
+**Primary corpus:** California DMHC Independent Medical Review (IMR) Determinations — all external-review decisions since 2001-01-01. Tens of thousands of cases; upstream is periodically republished as a whole file, so v1 builds against one pinned, sha256-identified snapshot and refresh is an explicit, deliberate act (OQ-1.3).
 
 - Dataset page: https://data.chhs.ca.gov/dataset/independent-medical-review-imr-determinations-trend
 - Mirror: https://catalog.data.gov/dataset/independent-medical-review-imr-determinations-trend
@@ -70,7 +70,7 @@ The `Findings` text is written **after** the decision by the reviewer and freque
 4. **Framing:** all model outputs are labeled *"external-review overturn likelihood"* — these cases already survived internal appeal (selection bias). This caveat appears in the model card and the UI.
 5. Raw `Findings` may be used for retrieval display and generation grounding **with citation**, since those are human-in-the-loop surfaces, not prediction inputs.
 
-Ruled as OQ-0.1 in OQ.md (2026-08-16), which also carries the precedent-channel amendment; this section is the protocol's source text.
+Ruled as OQ-0.1 in OQ.md (2026-08-16), which also carries the precedent-channel amendment; this section is the protocol's source text. Application note (OQ-1.4): the corpus also carries `IMRType`, `DaysToReview` and `DaysToAdopt`; the two `Days*` fields measure the review itself and are never prediction inputs, `IMRType` is set at filing and is prediction-eligible, with the nuance documented in the model card.
 
 ## 6. System architecture
 
@@ -130,7 +130,7 @@ rePeal/
 │   └── evals/  api/
 ├── frontend/            # React/Vite (OQ-0.3)
 ├── notebooks/           # EDA only; anything load-bearing graduates to src/
-├── tests/               # incl. fixtures with small synthetic/excerpt samples
+├── tests/               # synthetic fixtures only, generated from the schema contract; no real rows (OQ-1.8)
 ├── Makefile             # setup ingest annotate extract index train eval serve demo
 └── pyproject.toml
 ```
@@ -142,7 +142,7 @@ Repo structure above; tooling; GitHub Actions CI (lint + tests); decision record
 **DoD:** fresh clone → `make setup && make test` passes; CI green.
 
 ### Phase 1 — Ingest + EDA
-Downloader with checksum verification; schema contract test against real fields; parquet output. EDA notebook exported to `docs/evals/eda.md`: class balance by year/type, category distributions, `Findings` length stats, duplicates/nulls, any surprises. Write `docs/data-card.md`.
+Downloader with checksum verification; schema contract test against real fields; parquet output. EDA as a tested module (`profile.py`) that renders `docs/evals/eda.md` deterministically from the parquet, no notebook (OQ-1.7): class balance by year/type, category distributions, `Findings` length stats, duplicates/nulls, any surprises. Write `docs/data-card.md`.
 **DoD:** `make ingest` idempotently produces validated parquet; EDA report + data card committed.
 
 ### Phase 1.5 — Walking skeleton
@@ -199,7 +199,7 @@ Real PHI/EHR integration; payer submission APIs; NY DFS corpus; live guideline i
 | LLM extraction throughput over full corpus | Haiku-class for bulk passes + Opus-class for gold/audit (§7); sample-first runs; artifacts cached and resumable so a re-run never repeats completed work |
 | `Findings` text messy/truncated in places | quality flags at ingest; exclude-and-report policy |
 | Targets in §3 prove unrealistic | revise via OQ ruling with evidence — never silently |
-| Category taxonomy drift across 20+ years | normalization map built in Phase 1 EDA; versioned |
+| Category taxonomy drift across 20+ years | versioned legacy→new crosswalk canonicalizing to the 2026 ICD-10-chapter vocabulary at category level, raw labels preserved, unknown labels passed through and counted (OQ-1.2) |
 | Licensing missteps | no raw-data redistribution; no CPT descriptors; attribution in data card |
 
 ## 13. Open decisions (owner, not Claude Code)
