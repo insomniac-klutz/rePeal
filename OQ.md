@@ -41,8 +41,7 @@ the calls that shaped it.
   **Ruled 2026-09-09:** owner — (b): "we have moved away from adr model to oq/roller
   model" and "essentially entire docs fold into my two root files"; the ledgers live at
   the repo root next to `PRD.md` and `TODO.md`.
-  **Landed:** `refactor : fold adrs oqs hld and logs into oq and roller ledgers` (hash
-  after commit) · **ROLLER:** R-01.
+  **Landed:** 1dd64c9 (`refactor : fold adrs oqs hld and logs into oq and roller ledgers`) · **ROLLER:** R-01.
 
 - [x] [s:53ce5611] OQ-P.2 — Fold scope: what, if anything, stays under `docs/`.
   **Context.** After the fold, `docs/` would hold only `docs/data-card.md` (a PRD Phase
@@ -65,8 +64,8 @@ the calls that shaped it.
   `TODO.md`'s ✅ gate line, which carries the effort note (agents, passes, wall-clock)
   when each phase's gate flips.
   **Ruled 2026-09-09:** owner — (a): "ok do it" on the recommendation; `docs/data-card.md`
-  and `docs/evals/` stay, everything else under `docs/` is folded. · **Landed:** `refactor :
-  fold adrs oqs hld and logs into oq and roller ledgers` (hash after commit) · **ROLLER:** —
+  and `docs/evals/` stay, everything else under `docs/` is folded. · **Landed:** 1dd64c9 (`refactor :
+  fold adrs oqs hld and logs into oq and roller ledgers`) · **ROLLER:** —
   (the work is R-01).
 
 - [x] [s:53ce5611] OQ-P.3 — CLAUDE.md carries other-repo residue: fix it in this pass, or owner-only edits.

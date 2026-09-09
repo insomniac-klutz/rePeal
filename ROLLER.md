@@ -13,4 +13,4 @@ everyone else's are theirs. The queue is never empty, and that's fine.
 
 ---
 
-- [x] [s:53ce5611] R-01 — Fold ADRs, build logs, the Phase 1 HLD and its OQ file into OQ.md and ROLLER.md; re-point PRD.md, TODO.md, README.md, docs/data-card.md and CLAUDE.md. OQ: Process — "Decision-tracking model". Landed: `refactor : fold adrs oqs hld and logs into oq and roller ledgers`
+- [x] [s:53ce5611] R-01 — Fold ADRs, build logs, the Phase 1 HLD and its OQ file into OQ.md and ROLLER.md; re-point PRD.md, TODO.md, README.md, docs/data-card.md and CLAUDE.md. OQ: Process — "Decision-tracking model". Landed: 1dd64c9 (`refactor : fold adrs oqs hld and logs into oq and roller ledgers`)
