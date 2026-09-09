@@ -37,7 +37,7 @@ Verified against the actual download and enforced by a schema contract test in P
 
 ## Terms & release determination
 
-**Placeholder — IDs + annotations only; determination to be finalized before Phase 2.**
+**Ruled posture (OQ-1.1, 2026-09-09): noncommercial research/portfolio use under the CalHHS portal ToU's modify-with-flagging clause. Attribution wording and the final terms text are confirmed before Phase 2 ships.**
 
 Current working position, per PRD §4 and OQ-0.4:
 
@@ -51,6 +51,18 @@ Current working position, per PRD §4 and OQ-0.4:
 - The formal terms determination — exact license text, permitted derived-artifact scope, and
   attribution wording — **must be finalized before Phase 2 ships**, since Phase 2 is what
   produces the releasable gold files.
+- Every derived artifact (parquet, indexes, gold sets, eval reports) is flagged **modified,
+  non-official** and carries the preferred citation: `DMHC IMR Data, 2001 - Current`, the
+  dataset URL, and the publication date of the pinned snapshot.
+- Commercial use is treated as **blocked pending approval** (the OPA click-through's
+  commercial clause); this is a portfolio project.
+- Control-page check (2026-09-09): portal-wide boilerplate — the identical `id="popup"` OPA
+  click-through (verified byte-for-byte via raw HTTP fetch, not just rendered inspection)
+  appears on the DMHC IMR page, on dataset pages from three unrelated organizations
+  (Department of Health Care Services, California Department of Public Health, CHHS itself),
+  and on OPA's own dataset page; it is boilerplate injected into every CHHS portal dataset
+  page regardless of the page's actual publishing organization, not a DMHC- or OPA-specific
+  clause.
 
 ## Privacy & licensing constraints
 
