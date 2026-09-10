@@ -964,3 +964,275 @@ surfaces get appended below as OQ-1.12 onward, each carrying the building sessio
   `patient_gender` null (expected 691); the data card records the correction.
   · **Landed:** `add : category crosswalk and quality flags` (3fabd9e) ·
   **ROLLER:** — (rides with the Phase 1 quality module)
+
+---
+
+## Phase 1.5 — Walking skeleton [s:53ce5611]
+
+Opened 2026-09-10 for the thin end-to-end slice PRD §9 inserts between Phase 1 and Phase 2
+(OQ-0.6): ~100-case extraction → minimal DuckDB → logreg → one throwaway page, one command,
+numbers are not claims. Everything here is explicitly throwaway; the calls below are about
+keeping the throwaway honest, not about the Phase 3–8 designs.
+
+- [x] [s:53ce5611] OQ-1.5.1 — Where does the 100-card extraction artifact live?
+  **Context.** OQ-0.2 makes versioned JSONL artifacts with prompt hashes the unit of
+  provenance ("committed or checksummed"). OQ-1.1 (b) and OQ-0.4 forbid redistributing raw
+  or modified data, and a case card is an LLM paraphrase of a `Findings` narrative, i.e.
+  modified data. `data/` is gitignored wholesale.
+  **Options.** (a) the cards stay under `data/interim/skeleton/` (gitignored), regenerable
+  by the extraction workflow, each row carrying `prompt_hash`, `prompt_version`, `model`,
+  `workflow`, `extractor`; the committed artifacts are the prompt, the schema, the sampler
+  and synthetic test cards; (b) commit the 100 cards; (c) commit only a manifest with the
+  JSONL's sha256.
+  **Assumed:** (a) — consistent with every ruled policy; Phase 3 fixes the real artifact
+  contract before any full-corpus run.
+  **Recommendation:** (a).
+  **Ruled 2026-09-10:** owner — (a): the cards stay gitignored and regenerable; prompt, schema,
+  sampler and synthetic fixture cards are the committed artifacts. · **Landed:** `add : skeleton
+  case card schema prompt and sampler` (926a0e5) · **ROLLER:** — (nothing beyond
+  the phase's own commit)
+
+- [x] [s:53ce5611] OQ-1.5.2 — Who executes the 100-case extraction?
+  **Context.** OQ-0.2: LLM stages run as Claude Code agent workflows, `claude-opus-5` for
+  judgment-heavy surfaces and `claude-haiku-4-5` for bulk full-corpus passes; CLAUDE.md
+  pins every teammate to `sonnet` unless the owner says otherwise. 100 cases is neither a
+  full-corpus pass nor a judgment surface.
+  **Options.** (a) three sonnet teammates, ~34 cases each, reading the sampled narratives
+  from a local gitignored file and writing JSONL cards against the versioned prompt;
+  (b) one teammate for all 100 (slower, one long generation); (c) haiku-class per the
+  OQ-0.2 bulk rule (needs the owner to say so per CLAUDE.md).
+  **Assumed:** (a).
+  **Recommendation:** (a).
+  **Observed 2026-09-10:** three sonnet extractors finished 36/35/35 cards in 14–25 minutes each;
+  one went idle after reading and needed a nudge (a replacement was spawned in parallel and
+  discarded when the original finished first). All 106 cards validate, carry one prompt
+  hash, and show zero verdict leakage in any field; 103 carry `verdict_language_omitted`.
+  Evidence typing drifts by extractor (a: 25 studies / 10 guidelines; b: 15 / 18; c: 17 /
+  10) — the annotation-guide problem OQ-1.5.10 names.
+  **Ruled 2026-09-10:** owner — (a): sonnet teammates as the extraction stage for the skeleton;
+  the bulk model for the full-corpus run is Phase 3's call (OQ-0.2 names haiku-class for
+  bulk). · **Landed:** nothing to change (the 106 cards are the artifact, gitignored per
+  OQ-1.5.1) · **ROLLER:** —
+
+- [x] [s:53ce5611] OQ-1.5.3 — Precedent list for the skeleton: SQL over the full parquet, or a slice-only lookup?
+  **Context.** The DoD wants "a prediction + precedent list for a sample case". Phase 4 owns
+  real retrieval (BM25 + dense). DuckDB reads the 42,749-row parquet directly, so a
+  category-match + recency query over the whole corpus costs nothing. OQ-0.1's amendment
+  applies to precedents that feed a predictor; the skeleton's logreg uses none, so the
+  list is display-only (raw `Findings` allowed with citation, PRD §5 item 5) — but
+  self-exclusion and the strictly-earlier-year pool are applied anyway so nobody inherits
+  a leaky habit.
+  **Options.** (a) SQL over the full parquet: same `diagnosis_category` + `treatment_category`
+  + `case_type`, `report_year` < the query case's, self-excluded, newest first, top 5;
+  (b) the same over the 100-card slice only (mostly empty lists).
+  **Assumed:** (a).
+  **Recommendation:** (a).
+  **Observed 2026-09-10:** works — five precedents for the default case, all from the year
+  before the query, query excluded, `match_level` reported. Cost: `build` copies the whole
+  parquet into the DuckDB file (112 MB) on every run; still ~1 s, but Phase 4 should read
+  the parquet as a view rather than materialize it.
+  **Ruled 2026-09-10:** owner — (a): SQL over the full parquet, display-only, self-excluded,
+  strictly earlier years; the materialize-vs-view cost is carried into Phase 4's warehouse
+  design. · **Landed:** `add : skeleton duckdb warehouse and precedents` (76915c9)
+  · **ROLLER:** —
+
+- [x] [s:53ce5611] OQ-1.5.4 — How are the ~100 cases sampled?
+  **Context.** Phase 2 owns the real 250-case stratification (type × determination × era).
+  The skeleton needs ~100 rows that exercise every seam, deterministically.
+  **Options.** (a) seed 42, stratified by `case_type` × `overturned` × era (≤2021 vs
+  2022–2025 per OQ-1.5), 2001 and 2026 excluded, rows with `flag_findings_short` excluded,
+  quota-filled to ~100 with Urgent Care's small strata taken whole; (b) uniform random 100.
+  **Assumed:** (a).
+  **Recommendation:** (a).
+  **Observed 2026-09-10:** the real corpus lands at 106 rows, not 95–105 — the floor of 2 per
+  stratum across twelve strata pushes the total over `n`; Urgent Care's four small strata are
+  taken whole (4+4 rows). Harmless; recorded so the band isn't mistaken for a contract.
+  **Ruled 2026-09-10:** owner — (a): seeded stratified sample as built; 106 rows is the
+  outcome, not a defect. · **Landed:** `add : skeleton case card schema prompt and sampler`
+  (926a0e5) · **ROLLER:** —
+
+- [x] [s:53ce5611] OQ-1.5.5 — What is the "single-page demo" before the design zip exists?
+  **Context.** OQ-0.3: the Phase 1.5 page is a minimal hand-written throwaway, not the
+  Phase 8 React frontend; PRD §9 allows "CLI or minimal React page".
+  **Options.** (a) one static HTML file rendered by Python from the run's results
+  (prediction, top drivers, precedent list, the mandatory disclaimer footer), written next
+  to the artifacts (gitignored), plus the same content printed to the terminal;
+  (b) a React/Vite page (a JS toolchain for a throwaway); (c) CLI only.
+  **Assumed:** (a).
+  **Recommendation:** (a).
+  **Observed 2026-09-10:** works — `demo.html` is 5.5 KB, self-contained, escaped, footer and
+  banner present, byte-identical across two runs (no timestamps).
+  **Ruled 2026-09-10:** owner — (a): the static, escaped, timestamp-free HTML page plus the
+  terminal summary. · **Landed:** `add : skeleton logreg baseline page and run command`
+  (2faed5d) · **ROLLER:** —
+
+- [x] [s:53ce5611] OQ-1.5.6 — Seam: DuckDB ↔ polars interop needs pyarrow, which OQ-1.9 kept out of the stack
+  **Context.** Found by vortex-warehouse before writing `skeleton/warehouse.py`: every
+  DuckDB↔polars bridge (`con.register(df)`, `.pl()`, `.df()`, `.arrow()`) goes through
+  polars' `to_arrow()`, which raises `ModuleNotFoundError` without pyarrow. OQ-1.9 ruled
+  pyarrow out ("polars has native parquet, no pyarrow needed"), which is true for Phase 1
+  and false the moment DuckDB and polars have to exchange frames in memory. Phase 4's
+  warehouse (PRD §6: DuckDB star schema, polars loaders) sits right on this wall.
+  **Options.** (a) skeleton keeps the contained workaround — polars writes a scratch
+  parquet, DuckDB `read_parquet`s it; results come back via DB-API `fetchall()` +
+  `cursor.description` hand-assembled into polars; `evidence_kinds` round-trips as a
+  native `LIST(VARCHAR)` — and Phase 4 decides whether to add pyarrow when it designs the
+  real warehouse; (b) add pyarrow now (revisits OQ-1.9); (c) drop polars on the DuckDB
+  side and use DuckDB's own relational API end to end in Phase 4.
+  **Assumed:** (a) — two dozen lines, no new dependency, throwaway phase.
+  **Recommendation:** (a) now; (b) is the likely Phase 4 answer and should be ruled there
+  with the warehouse design, not smuggled in here.
+  **Ruled 2026-09-10:** owner — (a): keep the contained workaround; pyarrow is ruled with
+  Phase 4's warehouse design (TODO.md Phase 4 carries the pointer). · **Landed:** `add :
+  skeleton duckdb warehouse and precedents` (76915c9) · **ROLLER:** —
+
+- [x] [s:53ce5611] OQ-1.5.7 — Seam: the evidence-kind feature vocabulary is observed, not declared
+  **Context.** Found by neon-baseline: `evidence_cited` kinds are free-form per card, so at
+  100 rows there is no guarantee the train split sees every kind the test split does.
+  Without pinning the vocabulary at fit time, a test-only kind silently misaligns the
+  one-hot columns against the fitted coefficients — same matrix shape, wrong meaning, no
+  crash. The skeleton's `Baseline.fit` learns the kind vocabulary from train and
+  `predict_proba` reuses it (`features(df, known_kinds=…)`, an additive kwarg on the
+  fixed interface); an unseen kind at predict time is dropped, not misaligned.
+  **Options.** (a) skeleton: observed-from-train, as built; (b) Phase 5's real feature
+  pipeline reserves one column per `EvidenceKind` enum value regardless of what is
+  observed, so the design matrix is a function of the schema, not of the sample;
+  (c) observed-only forever.
+  **Assumed:** (a) for the skeleton.
+  **Recommendation:** (b) in Phase 5 — a feature space defined by the schema is the only
+  one that survives a refresh; rule it with the Phase 5 feature design.
+  **Ruled 2026-09-10:** owner — (a) for the skeleton; (b), a schema-declared evidence-kind
+  feature space, is recorded as the Phase 5 design (TODO.md Phase 5 carries the pointer).
+  · **Landed:** `add : skeleton logreg baseline page and run command` (2faed5d)
+  · **ROLLER:** —
+
+- [x] [s:53ce5611] OQ-1.5.8 — Seam: the joined slice hands the query case its own answer key
+  **Context.** Found by neon-baseline: `warehouse.slice_frame` returns every parquet column
+  joined to the card — `findings`, `overturned`, `determination_raw`, `days_to_*` — for the
+  query case as well as for training rows. The model never sees them (`baseline.features`
+  selects only the six structured columns plus the card fields and asserts nothing
+  forbidden leaks into the names), and `page.render` allowlists which case fields it ever
+  prints instead of iterating `case.items()`, so the demo does not print the outcome next
+  to the "prediction". But the leak-shaped object exists one dictionary away from the UI,
+  and Phase 8's `/case` and `/predict` endpoints will be built on something like it.
+  **Options.** (a) skeleton: allowlist in the page, as built; (b) Phase 8's API serves a
+  case-card projection (card fields + `PREDICTION_ELIGIBLE` structured fields) and never
+  the parquet row; the display record with cited `findings` is a separate precedent
+  surface (OQ-0.1 §5, Phase 4's two retrieval surfaces); (c) strip the post-decision
+  columns from `slice_frame` itself.
+  **Assumed:** (a).
+  **Recommendation:** (b), ruled with the Phase 8 API contract; (c) would also break the
+  skeleton's training path, which needs `overturned`.
+  **Ruled 2026-09-10:** owner — (a) for the skeleton; (b), the API serves a case-card
+  projection and never the parquet row, is recorded as the Phase 8 contract (TODO.md Phase 8
+  carries the pointer). · **Landed:** `add : skeleton logreg baseline page and run command`
+  (2faed5d) · **ROLLER:** —
+
+- [x] [s:53ce5611] OQ-1.5.9 — Seam: `row_id` is source order, not time
+  **Context.** neon-baseline's first real-scale smoke test sampled "the first N rows" of
+  the parquet and `temporal_split` refused it: the source CSV is not chronological —
+  `row_id` 0–28 are all ReportYear 2026 — so a low `row_id` is not an old case, and any
+  "head of the file" sample is 2026-heavy.
+  **Ruled 2026-09-10 (by the code):** `row_id` is the pinned snapshot's row order and
+  nothing else (schema.py docstring, OQ-1.0 Schema table); `sample_row_ids` stratifies by
+  `report_year` and never by position, `precedents` orders by `report_year`, and the
+  fail-loud split is what caught the bad sample. Evidence: neon-baseline's scratch run,
+  2026-09-10; `data/interim/imr_cases.parquet` rows 0–28. Nothing to change; the fact is
+  recorded so nobody downstream treats `row_id` as a recency proxy.
+  · **Landed:** nothing to change · **ROLLER:** —
+
+- [x] [s:53ce5611] OQ-1.5.10 — Seam: the narrative never marks where cited evidence ends and the reviewer's reasoning begins
+  **Context.** Reported by extractors a and b over 71 real cards. A sentence dressed as a
+  citation is often the reviewer's unattributed opinion with no named study or guideline
+  to hang a tag on; under the scrub rule it is excluded, so cards come out thinner than the
+  source (16 of 71 cards have empty `evidence_cited`; the median card cites one item).
+  Standardized scoring frameworks (ASAM, CALOCUS-CASII) are the sharpest case: a
+  legitimate guideline citation fused with the reviewer's per-dimension scores, which are
+  the verdict wearing a rubric — extractors kept the framework as `guideline` evidence and
+  dropped every score.
+  **Options.** (a) accept thin cards as the honest reading (what the skeleton did);
+  (b) Phase 2's annotation guide adds an explicit evidence-attribution rule (evidence
+  counts only when the narrative attributes it to a party before the review; a framework
+  name is evidence, its scores are not) and Phase 2's schema records `attribution` per
+  evidence item; (c) let extractors include reviewer-cited literature as evidence
+  (leak-shaped: the reviewer chose it after deciding).
+  **Assumed:** (a) for the skeleton.
+  **Recommendation:** (b), ruled with the Phase 2 case-card schema, using the line extractor c
+  drew and held across 35 cards: attributable external content stated as a general clinical
+  position (a named guideline's recommendation, a study's finding) is evidence; the
+  reviewer's own scoring or synthesis of this patient against a framework is not, however
+  specific it looks. Across all 106 cards, 28 (26%) cite nothing under that line.
+  **Observed 2026-09-10, an accidental inter-rater measurement:** the same 35 narratives were
+  extracted independently by two extractors (c, and the replacement d spawned during c's
+  silence): 12 vs 16 empty-evidence cards, 42 vs 46 evidence items, identical denial-basis
+  calls (0 deviations each), every card scrubbed in both. Where the two disagree is
+  exactly the attribution line above — the variance OQ-0.4's N-annotator design exists to
+  measure and escalate; Phase 2's guide should fix the line before, not after, annotation.
+  **Ruled 2026-09-10:** owner — (a) for the skeleton; (b), the explicit attribution line and a
+  per-item `attribution` field, is recorded for Phase 2's annotation guide and card schema
+  (TODO.md Phase 2 carries the pointer). · **Landed:** nothing to change in the skeleton
+  · **ROLLER:** —
+
+- [x] [s:53ce5611] OQ-1.5.11 — Seam: `payer_rationale` is stated in some narratives and has to be reconstructed in others
+  **Context.** Reported by both extractors: some narratives quote the plan's denial letter
+  ("the plan denied X indicating Y"); many — especially those that end in an overturn —
+  never separate the plan's original reasoning from the reviewer's own walkthrough and
+  simply argue the clinical case for the treatment. There the field is a paraphrase from
+  context, or a generic "denied as not medically necessary, no further detail" line. Two
+  extractors handled this the same way by instinct, not by rule, so consistency across the
+  merged set is luck. For Experimental/Investigational cases the statutory test ("likely to
+  be more beneficial than any available standard therapy") is at once the generic denial
+  rationale and the case-specific verdict, a sharper leak trap than upheld/overturned.
+  **Options.** (a) skeleton: as extracted; (b) Phase 2's schema adds
+  `payer_rationale_source: stated | inferred | absent` and the annotation guide fixes the
+  E/I phrasing rule (rationale stays generic; the beneficial-vs-standard formula is never
+  restated); (c) drop `payer_rationale` from the card when not stated.
+  **Assumed:** (a).
+  **Recommendation:** (b).
+  **Ruled 2026-09-10:** owner — (a) for the skeleton; (b), a `payer_rationale_source` field and
+  the E/I phrasing rule, is recorded for Phase 2's schema and annotation guide (TODO.md
+  Phase 2 carries the pointer). · **Landed:** nothing to change in the skeleton · **ROLLER:** —
+
+- [x] [s:53ce5611] OQ-1.5.12 — Seam: Phase 3's scrub cannot rely on section markers or on a fixed verdict vocabulary
+  **Context.** Verdict language is present in 68 of 71 cards' sources (the three exceptions
+  are narratives that stop before a conclusion). Pre-2013–2016 narratives (extractors put the boundary between those years; roughly a
+  third of each slice) skip the
+  "Nature of Statutory Criteria → Final Result → Credentials" template and end on a bare
+  concluding sentence that states the determination just as plainly, so a scrub keyed on
+  the `Final Result:` string misses them — consistent with the EDA's marker-prevalence
+  dip to 18.8% in 2020 and the pre-2007 gaps. Multi-item requests carry per-item verdicts
+  (one case rules on eight concurrent medications separately), and partial overturns make
+  the reviewer's approved quantity or session count itself outcome content, so a scrub
+  that removes the last paragraph still leaks.
+  **Options.** (a) Phase 3's scrub is structural-first (drop `Final Result:` blocks where
+  present) then sentence-level (verdict-language detector over every sentence), with
+  per-item and quantity-aware rules and the adversarial sentinel as the judge — the
+  design OQ-0.1 already implies; (b) marker-only scrub (fails on the older third of the
+  corpus); (c) LLM-only scrub with no detector (unauditable).
+  **Assumed:** (a) is the Phase 3 design; nothing changes in the skeleton.
+  **Recommendation:** (a); the skeleton's extractor findings are the first test cases for
+  Phase 3's detector fixture.
+  **Ruled 2026-09-10:** owner — (a): structural-then-sentence-level scrub with per-item and
+  quantity-aware rules and the sentinel as judge is the Phase 3 design (TODO.md Phase 3
+  carries the pointer); the skeleton's source patterns seed the detector fixture.
+  · **Landed:** nothing to change in the skeleton · **ROLLER:** —
+
+- [x] [s:53ce5611] OQ-1.5.13 — Seam: structured fields disagree with the narrative in a small share of rows
+  **Context.** In 71 cards: two rows whose `age_range`/`patient_gender` contradict the
+  narrative's stated age and sex (one is Male / 21–30 in the row and a 27-year-old woman in
+  the text; one has null demographics in the row and a stated age and sex in the text);
+  one row whose `diagnosis_category` is an infectious-disease label while the narrative is
+  entirely about chronic pain; one `Urgent Care` case adjudicated on medical-necessity
+  criteria with no emergency-services test (`denial_basis_differs_from_case_type`); one
+  request sentence grammatically missing the treatment name; one garbled dangling clause.
+  Extractors followed the spec ("drawn from findings") and used the narrative. None of this
+  is visible to Phase 1's flags, which never read the narrative's content.
+  **Options.** (a) note it; (b) Phase 3's extraction emits `field_conflicts[]` (which
+  structured field the narrative contradicts) so a quality flag can be derived from the
+  cards, joining Phase 1's eight; (c) treat the structured field as truth and ignore the
+  narrative.
+  **Assumed:** (a).
+  **Recommendation:** (b) — cheap at extraction time, impossible later.
+  **Ruled 2026-09-10:** owner — (a) now; (b), `field_conflicts[]` emitted at extraction and a
+  derived ninth quality flag, is recorded for Phase 3 (TODO.md Phase 3 carries the pointer).
+  · **Landed:** nothing to change in the skeleton · **ROLLER:** —

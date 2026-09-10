@@ -46,19 +46,19 @@ Design: OQ-1.0, ruled 2026-09-09 with OQ-1.1–1.11; built 2026-09-09/10 (OQ-1.1
 Thin end-to-end slice before any layer is built properly — find integration breakage while
 there are two components, not six. Everything here is explicitly throwaway.
 
-- [ ] ~100-case extraction slice (real prompt, real artifact shape, no full-corpus run)
-- [ ] Minimal DuckDB load of that slice → `tests/test_skeleton_slice.py`
-- [ ] Logistic-regression baseline on the slice — end-to-end wiring only, numbers are not claims
-- [ ] Single-page demo joining the three *(hand-written; the design zip is not available yet — OQ-0.3)*
-- [ ] Record what broke at the seams as OQ.md entries — that's the deliverable
+- [x] ~100-case extraction slice (real prompt, real artifact shape, no full-corpus run)
+- [x] Minimal DuckDB load of that slice → `tests/test_skeleton_slice.py`
+- [x] Logistic-regression baseline on the slice — end-to-end wiring only, numbers are not claims
+- [x] Single-page demo joining the three *(hand-written; the design zip is not available yet — OQ-0.3)*
+- [x] Record what broke at the seams as OQ.md entries — that's the deliverable → OQ-1.5.6–1.5.13 (eight seams, all ruled 2026-09-10)
 
-⛔ Phase 1.5 gate: `uv run pytest` green + DoD met — one command runs slice → DuckDB → prediction → page
+✅ **Phase 1.5 complete — 239 tests passing** *(gate: `make skeleton` runs 106 scrubbed cards → DuckDB → logreg → prediction + precedents → page on the real corpus, page byte-identical across runs; cards gitignored per OQ-1.5.1. Effort: 3 builders (cipher-cards, vortex-warehouse, neon-baseline), 4 sonnet extractors (a/b/c plus a replacement d whose output was discarded), 1 scribe (nova-scribe, journeys/01); ≈1h05m wall-clock on 2026-09-10; $0 API cost, OQ-0.2.)*
 
 ---
 
 ## Phase 2 — Annotation & gold sets
 
-- [ ] **Case-card JSON Schema** (pydantic): `patient_context`, `diagnosis_norm`, `treatment_requested`, `denial_basis` (enum), `payer_rationale`, `evidence_cited[]` (typed), `guideline_refs[]`, `scrub_flags` → `tests/test_case_card_schema.py`
+- [ ] **Case-card JSON Schema** (pydantic): `patient_context`, `diagnosis_norm`, `treatment_requested`, `denial_basis` (enum), `payer_rationale`, `evidence_cited[]` (typed), `guideline_refs[]`, `scrub_flags` → `tests/test_case_card_schema.py` — add per-item evidence `attribution` (OQ-1.5.10) and `payer_rationale_source` + the E/I phrasing rule (OQ-1.5.11); the skeleton's `CaseCard` v0 is the starting point
 - [ ] Stratified sample of **250 cases** (type × determination × era) → `tests/test_sampling.py`
 - [ ] Multi-agent annotation workflow: N independent annotators with differing prompts → disagreement-driven adjudicator pass (OQ-0.4) → `tests/test_annotation.py`
 - [ ] CLI annotation/review tool *(Streamlit dropped — OQ-0.3)*; owner human spot-check tier **n ≥ 25**, over-sampled on disagreement
@@ -72,8 +72,8 @@ there are two components, not six. Everything here is explicitly throwaway.
 
 ## Phase 3 — Extraction + scrub pipeline
 
-- [ ] LLM extraction with structured JSON output + retries, run over the full corpus as a Claude Code workflow (`claude-haiku-4-5`, OQ-0.2); artifacts carry `prompt_hash` / `prompt_version` / `model` → `tests/test_extract.py`
-- [ ] Scrub implementation — strip all outcome/verdict language → `tests/test_scrub.py`
+- [ ] LLM extraction with structured JSON output + retries, run over the full corpus as a Claude Code workflow (`claude-haiku-4-5`, OQ-0.2); artifacts carry `prompt_hash` / `prompt_version` / `model` → `tests/test_extract.py`; emit `field_conflicts[]` for a derived ninth quality flag (OQ-1.5.13)
+- [ ] Scrub implementation — strip all outcome/verdict language → `tests/test_scrub.py` — structural-then-sentence-level, per-item and quantity-aware, the sentinel as judge (OQ-1.5.12)
 - [ ] **Full OQ-0.1 (PRD §5) validation suite:** verdict-language regex battery + LLM audit (residual < 2%), human spot-check n=50 with logged checklist
 - [ ] **Adversarial leakage sentinel** — TF-IDF + logreg on raw `Findings` vs scrubbed case cards; wired into CI on fixtures → `tests/test_leakage_sentinel.py`
 - [ ] Per-field precision/recall/F1 vs the gold set + error taxonomy → `docs/evals/extraction.md`, carrying the OQ-0.4 circularity caveat
@@ -84,7 +84,7 @@ there are two components, not six. Everything here is explicitly throwaway.
 
 ## Phase 4 — Warehouse + retrieval
 
-- [ ] DuckDB star-ish schema + loaders: `dim_case`, `fact_determination`, `case_cards`, `evidence` → `tests/test_warehouse.py`
+- [ ] DuckDB star-ish schema + loaders: `dim_case`, `fact_determination`, `case_cards`, `evidence` → `tests/test_warehouse.py` — rule pyarrow here (OQ-1.5.6); read the parquet as a view, don't materialize it (OQ-1.5.3)
 - [ ] BM25 + dense (local `sentence-transformers`) hybrid retrieval; optional cross-encoder rerank if the judged set warrants → `tests/test_retrieval.py`
 - [ ] **Two distinct retrieval surfaces** (OQ-0.1 amendment): display records (may include cited `Findings`) vs case-card projections for prediction (never `Findings`) → `tests/test_retrieval_surfaces.py`
 - [ ] Assemble pooled relevance judgments for the Phase 2 query set from the systems now built
@@ -97,7 +97,7 @@ there are two components, not six. Everything here is explicitly throwaway.
 
 ## Phase 5 — Overturn predictor
 
-- [ ] Baselines in strict order: majority class → logreg(structured) → logreg(TF-IDF **scrubbed** text, doubles as sentinel) → LightGBM(structured + extracted) → `tests/test_predict.py`
+- [ ] Baselines in strict order: majority class → logreg(structured) → logreg(TF-IDF **scrubbed** text, doubles as sentinel) → LightGBM(structured + extracted) → `tests/test_predict.py` — evidence-kind feature space declared from the schema, not observed (OQ-1.5.7)
 - [ ] LLM few-shot with retrieved precedents on a small eval subset — precedents as **(scrubbed case card + `Determination`) only**, pre-query-year pool, self-excluded → `tests/test_precedent_pool.py`
 - [ ] **Temporal split** (train ≤ cutoff year from Phase 1, test after) → `tests/test_temporal_split.py`
 - [ ] Calibration + metrics: AUC/PR, reliability plot, **ECE**, SHAP top drivers; set the AUC floor via OQ ruling once the logreg baseline lands
@@ -136,7 +136,7 @@ Explicitly droppable if schedule pressure hits. Cut it as a whole; don't ship a 
 
 > **Blocked on the owner's "claude design zip"** — UI work cannot start before it is delivered (OQ-0.3).
 
-- [ ] FastAPI: `/case`, `/predict`, `/precedents`, `/draft_letter`, `/ask` → `tests/test_api.py`
+- [ ] FastAPI: `/case`, `/predict`, `/precedents`, `/draft_letter`, `/ask` → `tests/test_api.py` — `/case` and `/predict` serve a case-card projection, never the parquet row (OQ-1.5.8)
 - [ ] React/Vite frontend on the owner's design system (OQ-0.3): denial intake → likelihood + drivers → precedent panel → letter editor → analytics tab
 - [ ] Disclaimer footer on **every** page: *"Drafts for professional review — not legal or medical advice. Estimates reflect external-review-stage likelihood only."*
 - [ ] `make demo` runs the full experience locally from a fresh clone (Vite + uvicorn) → `tests/test_demo_smoke.py`
