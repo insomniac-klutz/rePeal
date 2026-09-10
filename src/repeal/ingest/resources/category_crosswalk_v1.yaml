@@ -1,0 +1,191 @@
+# Category crosswalk v1 -- legacy DMHC vocabulary -> the 2026 ICD-10-chapter-style
+# vocabulary (OQ-1.2: canonicalize to the NEW vocabulary, category level only; raw
+# values are always preserved in `*_raw` columns by normalize.py). "canonical" =
+# every label that survives normalization verbatim. "aliases" fire unconditionally.
+# "uncertain" are best guesses, NOT applied -- the source label stays
+# canonical-as-itself until the lead rules on it.
+#
+# Design trace, from the pinned 2026-06-01 snapshot (never committed -- OQ-1.0
+# Hazards #1 -- 48 diagnosis / 58 treatment categories; 2026 rows carry an
+# ICD-10-chapter-style diagnosis vocabulary and a CPT/HCPCS-section-style treatment
+# vocabulary alongside the legacy labels):
+#   1. 15 diagnosis + 2 treatment aliases applied -- clear rename or standard
+#      abbreviation, single target (4 diagnosis given as certain in OQ-1.2).
+#   2. 16 more (11 diagnosis, 5 treatment) parked `uncertain` with a `why` each, not
+#      applied; reported for the owner at 7,154 diagnosis / 13,987 treatment rows.
+#   3. OQ-1.12 (ruled 2026-09-10) applied the 9 of those 16 that are ICD-10-chapter-
+#      consistent broadenings (4,815 diagnosis + 2,744 treatment rows, now in
+#      `aliases` below) and left the other 7 (13,582 rows) canonical as themselves --
+#      each either splits across two new labels or folds a large distinct bucket
+#      into a looser one.
+#   4. Labels with no 2026 counterpart at all -- `Pharmacy` (11,948 rows), ten
+#      specialty `* Proc` labels (6,568 rows, only a generic `Surgery` to fold
+#      into), `DME MACs` vs `Durable Med Equip` (24 rows so far) -- left as
+#      themselves by OQ-1.13 (ruled 2026-09-10), revisited at the first refresh
+#      bringing a full single-vocabulary 2026 year.
+
+version: 1
+canonical_scheme: icd10-chapter-2026
+
+diagnosis:
+  # 19 true 2026-only labels (first seen ReportYear 2026, 33 distinct categories that
+  # year vs a steady 24 in 2023-2025 -- OQ-1.0) + 7 legacy labels with no confident
+  # 2026 counterpart (4 of which have a best-guess parked in `uncertain` below; the
+  # other 7 moved to `aliases` under the OQ-1.12 ruling, 2026-09-10).
+  canonical:
+    - "Circulatory System" # 2026-only
+    - "Dental Problems" # legacy, guess parked in uncertain
+    - "Digest System" # 2026-only
+    - "Disease Eye Adnexa" # 2026-only
+    - "Diseases of Blood" # 2026-only
+    - "Ear and Mastoid" # 2026-only
+    - "Ears/Nose/Throat" # legacy, guess parked in uncertain
+    - "Endo/Metabolic" # 2026-only
+    - "Foot Disorder" # legacy, guess parked in uncertain
+    - "Genitourinary Sys" # 2026-only
+    - "Hlth Factor/Contact" # 2026-only
+    - "Infect/Parasit Dx" # 2026-only
+    - "Injury Poison Oth" # 2026-only
+    - "Malfor/Deform/Abnor" # 2026-only
+    - "Mental Behav Neur" # 2026-only
+    - "Musculoskeletal" # 2026-only
+    - "Neoplasms (Tumor)" # 2026-only
+    - "Nervous System" # 2026-only
+    - "Not Applicable" # legacy, no 2026 counterpart
+    - "OB-GYN/ Pregnancy" # legacy, guess parked in uncertain
+    - "Other" # legacy, no 2026 counterpart
+    - "Pediatrics" # legacy, no 2026 counterpart
+    - "Pregnancy Childbirth" # 2026-only
+    - "Resp System" # 2026-only
+    - "Skin Subcutaneous" # 2026-only
+    - "Sym/Sign Ab Find" # 2026-only
+
+  # Same clinical area, obvious rename or standard abbreviation -- applied
+  # unconditionally. The four marked (lead-ruled) were given as certain in the
+  # OQ-1.2 spawn brief; most of the rest are vortex-mapper's read of the same bar.
+  # The seven marked `ruled OQ-1.12` are a looser bar -- ICD-10-chapter-consistent
+  # broadenings, not pure renames -- applied by the owner's 2026-09-10 ruling.
+  aliases:
+    "Autism Spectrum": "Mental Behav Neur" # ruled OQ-1.12 2026-09-10; ICD-10 Ch V (F84) covers autism; seen 2002-2025
+    "Blood Related Disord": "Diseases of Blood" # seen 2002-2025
+    "CNS/ Neuromusc Dis": "Nervous System" # seen 2001-2026; CNS = Central Nervous System
+    "Cancer": "Neoplasms (Tumor)" # seen 2001-2026 (lead-ruled)
+    "Cardiac/Circ Problem": "Circulatory System" # seen 2001-2026
+    "Chron Pain Synd": "Sym/Sign Ab Find" # ruled OQ-1.12 2026-09-10; symptom-based not organ-system; seen 2002-2018
+    "Digestive System/ GI": "Digest System" # seen 2002-2025
+    "Endocrine/Metabolic": "Endo/Metabolic" # seen 2002-2026 (lead-ruled)
+    "GU/ Kidney Disorder": "Genitourinary Sys" # seen 2001-2026; GU = Genitourinary
+    "Genetic Diseases": "Malfor/Deform/Abnor" # ruled OQ-1.12 2026-09-10; congenital/chromosomal genetic disease fits ICD-10 Ch XVII; seen 2002-2026
+    "Immuno Disorders": "Diseases of Blood" # ruled OQ-1.12 2026-09-10; ICD-10 Ch III bundles blood + immune-mechanism disorders; seen 2002-2026
+    "Infectious Disease": "Infect/Parasit Dx" # seen 2001-2025
+    "Mental Disorder": "Mental Behav Neur" # seen 2002-2026 (lead-ruled)
+    "Morbid Obesity": "Endo/Metabolic" # ruled OQ-1.12 2026-09-10; obesity is a metabolic diagnosis, a broadening not a rename; seen 2001-2019
+    "Orth/Musculoskeletal": "Musculoskeletal" # seen 2001-2026 (lead-ruled)
+    "Post Surgical Comp": "Injury Poison Oth" # ruled OQ-1.12 2026-09-10; post-surgical complications (T80-88) sit in the injury/external-causes chapter; seen 2003-2026
+    "Pregnancy/Childbirth": "Pregnancy Childbirth" # seen 2019-2026; the OQ-1.2 near-dup pair
+    "Prevention/Good Hlth": "Hlth Factor/Contact" # ruled OQ-1.12 2026-09-10; ICD-10 Ch XXI (Z00-Z99) covers preventive care; seen 2001-2025
+    "Respiratory System": "Resp System" # seen 2002-2025
+    "Skin Disorders": "Skin Subcutaneous" # seen 2002-2026
+    "Trauma/ Injuries": "Injury Poison Oth" # seen 2002-2025
+    "Vision": "Disease Eye Adnexa" # seen 2002-2025
+
+  # Best guess, NOT applied. Rows keep the legacy spelling (it's canonical-as-itself
+  # above) until the lead rules one way or the other on each of these. Seven
+  # siblings were promoted to `aliases` by the OQ-1.12 ruling (2026-09-10); these
+  # four stay canonical-as-themselves.
+  uncertain:
+    "Dental Problems":
+      to: "Digest System"
+      why: "ICD-10 dental codes (K00-14) sit in the digestive chapter; insurance taxonomies usually carve dental out on its own though"
+    "Ears/Nose/Throat":
+      to: "Ear and Mastoid"
+      why: "combined ENT; new vocab splits ear (Ch VIII) from nose/throat (Resp System) -- a category-level map can't split one label"
+    "Foot Disorder":
+      to: "Musculoskeletal"
+      why: "most foot disorders are orthopedic, but diabetic-foot/circulatory and dermatologic overlap exist"
+    "OB-GYN/ Pregnancy":
+      to: "Pregnancy Childbirth"
+      why: "OB-GYN is broader than pregnancy/childbirth (general gynecology too); retired 2019, exactly when Pregnancy/Childbirth appeared"
+
+treatment:
+  # 24 true 2026-only labels (first seen ReportYear 2026) + 29 legacy labels with no
+  # confident 2026 counterpart (3 of which have a best-guess parked in `uncertain`;
+  # DME and Transportation moved to `aliases` under the OQ-1.12 ruling, 2026-09-10).
+  # These read as CPT/HCPCS section names (Eval & Mgmt, Surgery, Radiology, Path &
+  # Lab, Medicine, plus HCPCS Level II buckets) rather than ICD-10 chapters -- a
+  # different, less familiar taxonomy, which is why `aliases` here is much shorter
+  # than diagnosis: most legacy treatment labels get no confident guess at all.
+  canonical:
+    - "Acute Med Svc Inpt" # legacy, no 2026 counterpart
+    - "Admin Misc Invest" # 2026-only
+    - "Alcohol Drug Tmt" # 2026-only
+    - "Alternative Tx" # legacy, guess parked in uncertain
+    - "Ambulance Transport" # 2026-only
+    - "Autism Related Tx" # legacy, no 2026 counterpart
+    - "Cancer Care" # legacy, no 2026 counterpart
+    - "Cardio-Vasc Proc" # legacy, no 2026 counterpart
+    - "Category III Codes" # 2026-only
+    - "Chemo Drugs" # 2026-only
+    - "Chiropractic Care" # legacy, no 2026 counterpart
+    - "DME MACs" # 2026-only
+    - "Dent/Orthodont Proc" # legacy, no 2026 counterpart
+    - "Diag Imag & Screen" # legacy, guess parked in uncertain
+    - "Drug Ad Oth Oral" # 2026-only
+    - "Durable Med Equip" # 2026-only
+    - "Ear-Nose-Thro Proc" # legacy, no 2026 counterpart
+    - "Elect/Therm/Radfreq" # legacy, no 2026 counterpart
+    - "Emergency/Urg Care" # legacy, no 2026 counterpart
+    - "Est National Codes" # 2026-only
+    - "Eval and Mgmt" # 2026-only
+    - "Gen Surg Proc" # legacy, no 2026 counterpart
+    - "Home Health Care" # legacy, no 2026 counterpart
+    - "MLTSS" # legacy, no 2026 counterpart
+    - "Med Surg Supplies" # 2026-only
+    - "Medicine Serv Proc" # 2026-only
+    - "Mental Health" # legacy, guess parked in uncertain
+    - "National Temp Codes" # 2026-only
+    - "Neurosurgery Proc" # legacy, no 2026 counterpart
+    - "Not Applicable" # legacy, no 2026 counterpart
+    - "Ob-Gyn Proc" # legacy, no 2026 counterpart
+    - "Ophthalmology Proc" # legacy, no 2026 counterpart
+    - "Ortho Proc Serv" # 2026-only
+    - "Orthopedic Proc" # legacy, no 2026 counterpart
+    - "Other Thera Proc" # 2026-only
+    - "Outpatient PPS" # 2026-only
+    - "Pain Management" # legacy, no 2026 counterpart
+    - "Path Lab Proc" # 2026-only
+    - "Path Lab Serv" # 2026-only
+    - "Pharmacy" # legacy, no 2026 counterpart
+    - "Prev Health Screen" # legacy, no 2026 counterpart
+    - "Proc/Profess Serv" # 2026-only
+    - "Prop Lab Analyses" # 2026-only
+    - "Prosthetic Proc" # 2026-only
+    - "Radio Proc" # 2026-only
+    - "Reconstr/Plast Proc" # legacy, no 2026 counterpart
+    - "Rehab/ Svc - Outpt" # legacy, no 2026 counterpart
+    - "Rehab/Svcs SNF Inpt" # legacy, no 2026 counterpart
+    - "Special Proc" # legacy, no 2026 counterpart
+    - "Surgery" # 2026-only
+    - "Temp Codes" # 2026-only
+    - "Urology Proc" # legacy, no 2026 counterpart
+    - "Vision Services/Ophthalmology" # legacy, no 2026 counterpart
+
+  # Diag/ MD Eval and Vision Services are pre-existing renames; DME and
+  # Transportation were added by the OQ-1.12 ruling (2026-09-10) -- see the
+  # header design trace.
+  aliases:
+    "DME": "Durable Med Equip" # ruled OQ-1.12 2026-09-10; general DME bucket, distinct from DME MACs; seen 2001-2026
+    "Diag/ MD Eval": "Eval and Mgmt" # seen 2001-2025; "MD Eval" = the E/M coding term
+    "Transportation": "Ambulance Transport" # ruled OQ-1.12 2026-09-10; narrower than general transportation; seen 2017-2025
+    "Vision Services": "Vision Services/Ophthalmology" # seen 2002-2019; retired exactly when the /Ophthalmology spelling took over
+
+  uncertain:
+    "Alternative Tx":
+      to: "Other Thera Proc"
+      why: "loose fit; alternative/complementary therapy has no dedicated new-vocab bucket"
+    "Diag Imag & Screen":
+      to: "Radio Proc"
+      why: "diagnostic imaging maps to radiology, but '& Screen' may also cover non-radiology (e.g. lab) screening"
+    "Mental Health":
+      to: "Medicine Serv Proc"
+      why: "CPT's Medicine section includes psychiatric/psychotherapy codes, but this is a large bucket to fold into one target"
