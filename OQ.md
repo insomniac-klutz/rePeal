@@ -583,7 +583,7 @@ surfaces get appended below as OQ-1.12 onward, each carrying the building sessio
   **Ruled 2026-09-09:** owner — (a) approved as proposed. All eleven dependent calls
   (OQ-1.1–1.11) were ruled the same day exactly as this design assumed; the only open slot
   is the cutoff year, which OQ-1.5 closes from the candidate table. Phase 1 may spawn.
-  · **Landed:** pending — the Phase 1 build (TODO.md) lands it. · **ROLLER:** — (phase work)
+  · **Landed:** 7fad9b8, 1b7a0e7, 3fabd9e, 6cdcdc4, c89aeb8 (the five Phase 1 build commits) — the Phase 1 build (TODO.md) lands it. · **ROLLER:** — (phase work)
 
 - [x] OQ-1.1 — Terms posture: does the OPA click-through modal bind this project? (owner call)
   **Context.** The dataset carries no license (`license_id: null`, "No License Provided").
@@ -667,7 +667,7 @@ surfaces get appended below as OQ-1.12 onward, each carrying the building sessio
   **Ruled 2026-09-09:** owner — (a) canonicalize to the new (ICD-10-chapter-style)
   vocabulary, category level only in Phase 1; subcategories mechanical cleanup + raw
   preserved; `*_raw` columns always kept; `category_crosswalk_v1.yaml` versioned; unknown
-  labels pass through and are counted, never errored. · **Landed:** pending — crosswalk +
+  labels pass through and are counted, never errored. · **Landed:** 3fabd9e — crosswalk +
   `normalize.py` are Phase 1 work (TODO); the PRD §12 row refinement is R-03. · **ROLLER:** R-03
 
 - [x] OQ-1.3 — Snapshot policy: pin one dated snapshot for all of v1?
@@ -688,7 +688,7 @@ surfaces get appended below as OQ-1.12 onward, each carrying the building sessio
   **Ruled 2026-09-09:** owner — (a) pin. First `make ingest` records the dated snapshot and
   its self-computed sha256 in `manifest.json`; re-runs verify and reuse it; refresh is
   explicit (`make ingest REFRESH=1`) and produces a new dated raw file, a new manifest
-  entry, and deliberate downstream re-runs. · **Landed:** pending — `download.py` + manifest
+  entry, and deliberate downstream re-runs. · **Landed:** 7fad9b8 — `download.py` + manifest
   are Phase 1 work (TODO); the PRD §4 wording is R-04. · **ROLLER:** R-04
 
 - [x] OQ-1.4 — Leakage-protocol classification of the three undocumented fields (OQ-0.1)
@@ -714,11 +714,11 @@ surfaces get appended below as OQ-1.12 onward, each carrying the building sessio
   **Ruled 2026-09-09:** owner — (a) ingest all three. `days_to_review`/`days_to_adopt`
   tagged post-decision in `schema.py` metadata, excluded from every predictor feature set
   (Phase 5 test enforces), kept for descriptive analytics; `imr_type` pre-decision and
-  prediction-eligible, nuance documented in the model card. · **Landed:** pending —
+  prediction-eligible, nuance documented in the model card. · **Landed:** 1b7a0e7 —
   `schema.py` classification is Phase 1 work (TODO); the PRD §5 application note is R-05.
   · **ROLLER:** R-05
 
-- [ ] OQ-1.5 — Temporal cutoff: decision criteria, and what to do with 2026
+- [x] OQ-1.5 — Temporal cutoff: decision criteria, and what to do with 2026
   **Context.** PRD's working proposal: train ≤2021 / test 2022+ (→ 10,013 test rows, 23.4%).
   Alternative ≤2022 / 2023+ → 8,237 (19.3%). Complications recon measured: overturn rate is
   non-stationary (25% → 72% across the corpus, 62–72% in the 2020s — OQ-1.0), 2026 is partial
@@ -740,8 +740,11 @@ surfaces get appended below as OQ-1.12 onward, each carrying the building sessio
   (2019–2024) decides the year in a second ruling on this entry, after which it is frozen
   and never re-tuned. 2026 stays out of both windows, flagged, until a full-year
   single-vocabulary slice exists; 2001 excluded.
-  **Ruled (year):** _pending the candidate table_ · **Landed:** — · **ROLLER:** — (PRD
-  Phase 5 line updates when the year is frozen)
+  **Ruled 2026-09-10 (year):** owner — (a) 2021, frozen: train ≤2021 / test 2022–2025
+  (32,708 / 9,467 rows, 22.4% test share, 4 full modern years; 2001 and 2026 excluded), from
+  the candidate table in `docs/evals/eda.md` (2022 also met the criteria at 18.2% / 3 years).
+  Never re-tuned (PRD §9 Phase 5). · **Landed:** `update : prd phase 5 cutoff year from oq-1.5`
+  (cf7b887) · **ROLLER:** R-08
 
 - [x] OQ-1.6 — Dataframe contract: pandera, or hand-rolled checks?
   **Context.** The contract is small — 14 columns, 4 enum domains, 3 casts, nullability
@@ -761,7 +764,7 @@ surfaces get appended below as OQ-1.12 onward, each carrying the building sessio
   the ruling).
   **Ruled 2026-09-09:** owner — (a) pandera with its polars integration; inside the PRD
   default. Re-rule to (b) only on evidence that pandera's polars support fights us in
-  practice. · **Landed:** pending — `schema.py` is Phase 1 work (TODO); no PRD change.
+  practice. · **Landed:** 1b7a0e7 — `schema.py` is Phase 1 work (TODO); no PRD change.
   · **ROLLER:** —
 
 - [x] OQ-1.7 — EDA vehicle: notebook (PRD-literal) or tested module + renderer?
@@ -783,7 +786,7 @@ surfaces get appended below as OQ-1.12 onward, each carrying the building sessio
   `eda.md` proves unreadable as tables).
   **Ruled 2026-09-09:** owner — (a) `profile.py` (pure, tested stat functions) + a
   renderer writing `docs/evals/eda.md`; no notebook, no jupyter, tables-first, no plotting
-  dependency in Phase 1. · **Landed:** pending — `profile.py` is Phase 1 work (TODO); the
+  dependency in Phase 1. · **Landed:** c89aeb8 — `profile.py` is Phase 1 work (TODO); the
   PRD §9 Phase 1 wording is R-06. · **ROLLER:** R-06
 
 - [x] OQ-1.8 — Fixtures: synthetic-only, or a tiny real excerpt?
@@ -803,7 +806,7 @@ surfaces get appended below as OQ-1.12 onward, each carrying the building sessio
   validating the real download on every local run.
   **Ruled 2026-09-09:** owner — (a) synthetic-only: ~60 generated rows, real column names,
   every enum value, both vocabularies, every flagged pathology; generator committed and
-  derived from `schema.py` constants; no real rows ever committed. · **Landed:** pending —
+  derived from `schema.py` constants; no real rows ever committed. · **Landed:** 1b7a0e7 —
   fixture + generator are Phase 1 work (TODO); the PRD §8 wording is R-07. · **ROLLER:** R-07
 
 - [x] OQ-1.9 — First runtime dependencies
@@ -818,7 +821,7 @@ surfaces get appended below as OQ-1.12 onward, each carrying the building sessio
   **Recommendation:** as proposed.
   **Ruled 2026-09-09:** owner — approved as proposed: `polars`, `requests`, `pyyaml`,
   `pandera`; no pandas, pyarrow, jupyter or plotting libs; deps single-writer (the
-  downloader teammate). · **Landed:** pending — deps bootstrap is Phase 1 work (TODO); no
+  downloader teammate). · **Landed:** 7fad9b8 — deps bootstrap is Phase 1 work (TODO); no
   PRD change. · **ROLLER:** —
 
 - [x] OQ-1.10 — Upstream drift guard: where does the datastore probe live?
@@ -838,7 +841,7 @@ surfaces get appended below as OQ-1.12 onward, each carrying the building sessio
   **Ruled 2026-09-09:** owner — (a) `make check-upstream` only: manual / before each phase,
   never in pytest or the commit-blocking CI job. (b), a scheduled non-blocking CI probe, is
   not ruled in; it can be raised as a new entry once CI on `maestro` is live (OQ-0.7).
-  · **Landed:** pending — Makefile target + probe helper are Phase 1 work (TODO); no PRD
+  · **Landed:** 7fad9b8 — Makefile target + probe helper are Phase 1 work (TODO); no PRD
   change. · **ROLLER:** —
 
 - [x] OQ-1.11 — Quality-flag set and threshold procedure — sign-off
@@ -859,5 +862,105 @@ surfaces get appended below as OQ-1.12 onward, each carrying the building sessio
   **Recommendation:** approve set + procedure; flags are cheap to add later, expensive to
   retrofit into published artifacts.
   **Ruled 2026-09-09:** owner — approved as proposed: the eight flag columns, never row
-  drops; thresholds pinned by EDA percentiles and recorded in the data card. · **Landed:**
-  pending — `quality.py` is Phase 1 work (TODO); no PRD change. · **ROLLER:** —
+  drops; thresholds pinned by EDA percentiles and recorded in the data card. · **Landed:** 3fabd9e — `quality.py` is Phase 1 work (TODO); no PRD change. · **ROLLER:** —
+
+- [x] [s:53ce5611] OQ-1.12 — Crosswalk: apply the 16 parked legacy→2026 best-guess mappings, or keep those labels canonical-as-themselves?
+  **Context.** `category_crosswalk_v1.yaml` was authored from the real 2026-06-01 corpus (48
+  diagnosis / 58 treatment categories). Fifteen diagnosis aliases and two treatment aliases
+  are clear renames and are applied. Sixteen more (11 diagnosis, 5 treatment) are
+  best-guesses parked under `uncertain`, NOT applied: the legacy label stays canonical as
+  itself and `normalize.apply` reports how often each occurs (`uncertain_seen` in
+  `ingest_report.json`, filled by the integrated run). Diagnosis: Autism Spectrum→Mental
+  Behav Neur; Chron Pain Synd→Sym/Sign Ab Find; Dental Problems→Digest System; Ears/Nose/
+  Throat→Ear and Mastoid; Foot Disorder→Musculoskeletal; Genetic Diseases→Malfor/Deform/
+  Abnor; Immuno Disorders→Diseases of Blood; Morbid Obesity→Endo/Metabolic; OB-GYN/
+  Pregnancy→Pregnancy Childbirth; Post Surgical Comp→Injury Poison Oth; Prevention/Good
+  Hlth→Hlth Factor/Contact. Treatment: Alternative Tx→Other Thera Proc; DME→Durable Med
+  Equip; Diag Imag & Screen→Radio Proc; Mental Health→Medicine Serv Proc;
+  Transportation→Ambulance Transport. Finding on the treatment axis: only 2 of 31 legacy
+  treatment labels have a confident 2026 counterpart — the 2026 treatment vocabulary reads
+  as CPT/HCPCS section names, not a rename of the old scheme — so treatment-category
+  trends still fracture at 2026 for most labels whatever is ruled here.
+  **Options.** (a) apply none; legacy labels stay canonical as themselves, their trends
+  end at 2026 and the 2026 rows start fresh under the new labels; (b) apply all 16;
+  (c) apply the ICD-10-chapter-consistent subset — the seven diagnosis guesses that are
+  chapter-correct broadenings (Autism Spectrum, Chron Pain Synd, Genetic Diseases, Immuno
+  Disorders, Morbid Obesity, Post Surgical Comp, Prevention/Good Hlth) plus DME and
+  Transportation on the treatment side — and keep the rest (Dental, ENT, Foot, OB-GYN,
+  Alternative Tx, Diag Imag & Screen, Mental Health) as themselves because each either
+  splits across two new labels or broadens badly.
+  **Row counts (real corpus, vortex-mapper's enumeration, 2026-09-09).** Diagnosis, 7,154 rows
+  on unapplied guesses: Autism Spectrum 1,390 (2002–2025); OB-GYN/ Pregnancy 1,080
+  (2001–2019); Immuno Disorders 960 (2002–2026); Morbid Obesity 948 (2001–2019);
+  Prevention/Good Hlth 819 (2001–2025); Ears/Nose/Throat 702 (2001–2026); Foot Disorder
+  397 (2002–2025); Genetic Diseases 350 (2002–2026); Chron Pain Synd 193 (2002–2018);
+  Dental Problems 160 (2002–2025); Post Surgical Comp 155 (2003–2026). Treatment, 13,987
+  rows: Diag Imag & Screen 5,994 (2001–2026); Mental Health 4,835 (2002–2026); DME 2,679
+  (2001–2026; `DME MACs` has 6 rows so far); Alternative Tx 414 (2002–2025);
+  Transportation 65 (2017–2025). Not in `uncertain` because no single target exists (see
+  OQ-1.13): the ten specialty `* Proc` labels ≈ 6,568 rows and `Pharmacy` 11,948 rows.
+  **Assumed:** (a) — that is what the code does today; nothing is mapped on a guess.
+  **Recommendation:** (c): apply Autism Spectrum, Chron Pain Synd, Genetic Diseases, Immuno
+  Disorders, Morbid Obesity, Post Surgical Comp, Prevention/Good Hlth (4,815 diagnosis rows,
+  each an ICD-10-chapter-correct broadening) plus DME and Transportation (2,744 treatment
+  rows); keep OB-GYN/ Pregnancy, Ears/Nose/Throat, Foot Disorder, Dental Problems,
+  Diag Imag & Screen, Mental Health and Alternative Tx as themselves (13,582 rows) because
+  each either splits across two new labels or folds a large distinct bucket into a
+  looser one. If ruled, the nine move from `uncertain` to `aliases` in
+  `category_crosswalk_v1.yaml` (version stays 1 until the first commit that ships it;
+  bump to v2 after) and the mapped counts in `ingest_report.json` change accordingly.
+  **Ruled 2026-09-10:** owner — (c) with a trace: "yes map to icd chapters … with a trace
+  note that says what we did during crosswalk design". Lead's reading: apply the nine
+  ICD-10-chapter-consistent mappings (Autism Spectrum, Chron Pain Synd, Genetic Diseases,
+  Immuno Disorders, Morbid Obesity, Post Surgical Comp, Prevention/Good Hlth; DME,
+  Transportation), keep the other seven as themselves, and record a design-trace note in
+  the YAML header and the data card. · **Landed:** rides with
+  `add : category crosswalk and quality flags` (3fabd9e) · **ROLLER:** R-09
+
+- [x] [s:53ce5611] OQ-1.13 — Treatment-axis continuity across the 2026 migration: fold the ten legacy procedure labels into `Surgery`, and what about `Pharmacy` and `DME`?
+  **Context.** Beyond the parked guesses in OQ-1.12, vortex-mapper's enumeration of the real
+  corpus found three treatment-category breaks with no crosswalk answer at all. (1) Ten
+  legacy procedure labels — Cardio-Vasc Proc, Ear-Nose-Thro Proc, Gen Surg Proc,
+  Neurosurgery Proc, Ob-Gyn Proc, Ophthalmology Proc, Orthopedic Proc, Reconstr/Plast Proc,
+  Special Proc, Urology Proc — have no 2026 equivalent; the new vocabulary's only procedure
+  bucket is a single generic `Surgery`. Folding them in is a granularity decision (does an
+  appeals model care that orthopedic ≠ neurosurgery?), not a rename. (2) `Pharmacy`, 11,948
+  rows and the largest treatment category in the corpus, has no 2026 counterpart; the new
+  vocabulary carries HCPCS-style drug buckets (`Chemo Drugs`, `Drug Ad Oth Oral`) instead.
+  (3) `DME` (2,679 legacy rows) may have split into `Durable Med Equip` and `DME MACs` (24
+  rows combined so far). Today all of these stay canonical as themselves. Two facts bound
+  the stakes: the 2026 slice is 546 rows, 1.3% of the corpus, and OQ-1.5's ruled criteria
+  exclude 2026 from both modeling windows, so v1's predictor never trains or tests on
+  new-vocabulary treatment labels; the break affects trend reporting and future ingests,
+  not the v1 model. The 2026 vocabulary is also still mutating (OQ-1.0 Risks).
+  **Options.** (a) leave all three as they are; treatment trends end at 2025 for those
+  labels, the 2026 rows start fresh, and the crosswalk is revisited at the first refresh
+  that brings a full single-vocabulary 2026 year; (b) fold the ten procedure labels into
+  `Surgery` now and map `DME`→`Durable Med Equip`, accepting the granularity loss on 25
+  years of history for continuity on 546 rows; (c) add a coarse derived `treatment_group`
+  column alongside the canonical label so both granularities survive — more machinery
+  than Phase 1 needs.
+  **Assumed:** (a) — nothing folded; it is what the code and the YAML do today.
+  **Recommendation:** (a) for v1, with the revisit written into the data card's caveats;
+  the decision gets cheaper, not harder, once a full 2026 year shows what the new
+  treatment labels actually contain.
+  **Ruled 2026-09-10:** owner — (a) "leave them". · **Landed:** nothing to change in code;
+  the revisit-at-first-full-2026-year note goes into the data card with R-09. · **ROLLER:** —
+
+- [x] [s:53ce5611] OQ-1.14 — Legacy-cohort flag: are the 691 demographic-null rows and the 691 `DaysToReview`-null rows the same rows?
+  **Context.** OQ-1.0's value-domain notes (from the 2026-08-16 recon) describe "one clean
+  cohort: 2001–2003 rows missing `AgeRange` + `PatientGender` + `DaysToReview` together",
+  and OQ-1.11's `flag_legacy_cohort` was defined as all three null. The integrated run on
+  the real corpus returned 0 rows for that flag.
+  **Options.** (a) the three-way definition is right and the flag is buggy; (b) the recon
+  conflated two populations with the same count and the flag must be the two demographic
+  nulls only.
+  **Ruled 2026-09-09 (by the code):** (b). On `data/interim/imr_cases.parquet` (snapshot
+  sha f68951823f…): rows with `age_range` AND `patient_gender` null = 691, all ReportYear
+  2001–2003 (27 / 646 / 18), and `days_to_review` is populated on every one of them; the
+  691 `days_to_review` nulls are different rows, ReportYear 2007 onward (2007: 3, 2008: 65,
+  2009: 9, 2010: 31, 2011: 20, …). Found by the lead's verification query after
+  `make ingest`. `flag_legacy_cohort` is redefined as `age_range` null AND
+  `patient_gender` null (expected 691); the data card records the correction.
+  · **Landed:** `add : category crosswalk and quality flags` (3fabd9e) ·
+  **ROLLER:** — (rides with the Phase 1 quality module)

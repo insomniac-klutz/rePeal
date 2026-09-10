@@ -28,16 +28,16 @@ moment tests confirm the gate passes. Don't wait to be asked.
 
 ## Phase 1 — Ingest + EDA
 
-Design: OQ-1.0 in OQ.md (HLD, proposed 2026-08-16). Nothing spawns until OQ-1.0–1.11 are ruled.
+Design: OQ-1.0, ruled 2026-09-09 with OQ-1.1–1.11; built 2026-09-09/10 (OQ-1.12–1.14 ruled along the way).
 
-- [ ] Downloader with checksum verification → immutable `data/raw/`, idempotent `make ingest` → `src/repeal/ingest/download.py` → `tests/test_download.py`
-- [ ] Schema contract test against the **real** field list; parquet output to `data/interim/` → `schema.py`, `run.py` → `tests/test_ingest.py`, `tests/test_schema_contract.py`
-- [ ] Category normalization map for 20+ years of taxonomy drift — versioned → `normalize.py` + `resources/category_crosswalk_v1.yaml` → `tests/test_normalize.py`
-- [ ] Quality flags for messy/truncated `Findings`; exclude-and-report policy → `quality.py` → `tests/test_quality.py`
-- [ ] EDA — tested module + markdown renderer, not a notebook *(vehicle pending OQ-1.7)* → `profile.py` → `tests/test_profile.py`; renders `docs/evals/eda.md` — class balance by year/type, category distributions, `Findings` length stats, duplicates/nulls, surprises
-- [ ] Populate `docs/data-card.md`; **define the temporal cutoff year** (fixed by the ruling on OQ-1.5) that Phase 5's split depends on
+- [x] Downloader with checksum verification → immutable `data/raw/`, idempotent `make ingest` → `src/repeal/ingest/download.py` → `tests/test_download.py`
+- [x] Schema contract test against the **real** field list; parquet output to `data/interim/` → `schema.py`, `run.py` → `tests/test_ingest.py`, `tests/test_schema_contract.py`
+- [x] Category normalization map for 20+ years of taxonomy drift — versioned → `normalize.py` + `resources/category_crosswalk_v1.yaml` → `tests/test_normalize.py`
+- [x] Quality flags for messy/truncated `Findings`; exclude-and-report policy → `quality.py` → `tests/test_quality.py`
+- [x] EDA — tested module + markdown renderer, not a notebook *(OQ-1.7 ruled: module, no notebook)* → `profile.py` → `tests/test_profile.py`; renders `docs/evals/eda.md` — class balance by year/type, category distributions, `Findings` length stats, duplicates/nulls, surprises
+- [x] Populate `docs/data-card.md`; **define the temporal cutoff year** (ruled OQ-1.5: 2021, frozen) that Phase 5's split depends on
 
-⛔ Phase 1 gate: `uv run pytest` green + DoD met — `make ingest` idempotently produces validated parquet; EDA report + data card committed
+✅ **Phase 1 complete — 150 tests passing** *(gate: `make ingest` idempotent on the real 42,749-row 2026-06-01 snapshot, parquet byte-identical across runs, `make check-upstream` clean; `docs/evals/eda.md` + `docs/data-card.md` committed. Effort: 5 teammates — neon-fetcher, cipher-contract, vortex-mapper, phantom-profiler, then blitz-crosswalk for R-08/R-09 — one build pass each plus 2–4 review rounds, ≈1h45m wall-clock on 2026-09-09 and ≈20m on 2026-09-10; $0 API cost, OQ-0.2.)*
 
 ---
 
