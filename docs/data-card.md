@@ -10,7 +10,7 @@
 | | |
 |---|---|
 | **Status** | populated — Phase 1 |
-| **Last updated** | 2026-09-09 |
+| **Last updated** | 2026-09-10 |
 | **Corpus** | California DMHC Independent Medical Review Determinations |
 | **Coverage** | all external-review decisions since 2001-01-01; periodic full-file republish upstream, v1 pinned to the 2026-06-01 snapshot (OQ-1.3) |
 | **Scale** | 42,749 cases, verified · report_year 2001–2026 (2026 partial: 546 rows, publish cutoff 2026-06-01) |
@@ -257,5 +257,5 @@ revisited at the first refresh that brings a full single-vocabulary 2026 year.
   Gen Surg Proc 1,455, Reconstr/Plast Proc 1,310, … 6,568 rows combined) — a granularity
   loss, not a rename, so it's parked rather than guessed. `DME` (2,679 legacy rows) looks
   like it split into `Durable Med Equip` + `DME MACs`, 24 rows combined so far — too thin
-  a signal to call yet. All three are OQ-1.13, open, and independent of OQ-1.12's list —
+  a signal to call yet. All three are OQ-1.13, ruled 2026-09-10: left as they are for v1, and independent of OQ-1.12's list —
   this is "no candidate exists," not "candidate unapplied."
