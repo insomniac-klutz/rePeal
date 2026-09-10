@@ -114,7 +114,7 @@ Current working position, per PRD §4 and OQ-0.4:
   input; see PRD §5 and OQ.md OQ-0.1.
 - **Taxonomy drift** across 20+ years of category labels — `normalize.py` +
   `category_crosswalk_v1.yaml` (v1) canonicalize to the 2026 vocabulary; scope and
-  remaining gaps are in Category distributions below and OQ-1.12/OQ-1.13 (open).
+  remaining gaps are in Category distributions below and OQ-1.12/OQ-1.13 (both ruled 2026-09-10).
 
 ## Quality flags
 
@@ -227,7 +227,7 @@ revisited at the first refresh that brings a full single-vocabulary 2026 year.
   Treatment categories are worse: only 2 of 31 legacy labels have a confident 2026
   counterpart (OQ-1.2) — the new treatment vocabulary reads as CPT/HCPCS section names,
   not a renamed version of the old scheme, so treatment-category trends still fracture at
-  2026 regardless of crosswalk effort (OQ-1.13, open).
+  2026 regardless of crosswalk effort (OQ-1.13, ruled 2026-09-10: left as they are for v1).
 - **Label drift is large and monotonic-ish, not a rounding error.** Pooled overturn rate
   (52.5%) describes no actual year: 25.0% (2001) → ~45% (mid-2000s) → ~50% (mid-2010s) →
   60–72% (2020s). This is why OQ-1.5 makes the temporal-split criteria the decision, not
