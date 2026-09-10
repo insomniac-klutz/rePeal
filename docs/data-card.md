@@ -221,9 +221,13 @@ revisited at the first refresh that brings a full single-vocabulary 2026 year.
   real corpus. `quality.flag_legacy_cohort` is defined on the two-column version;
   `profile.null_cohorts` reports both the two-way and three-way cohorts side by side so
   this is visible in the table, not just asserted in prose.
-- **The 2026 vocabulary migration is real and large, on one axis.** Diagnosis categories
-  hold steady at 24 distinct labels for 2020–2025, then jump to 33 in 2026 (4 genuinely
-  new: Ear and Mastoid, Hlth Factor/Contact, Malfor/Deform/Abnor, Sym/Sign Ab Find).
+- **The 2026 vocabulary migration is real and large, on one axis.** On the raw
+  `diagnosis_category_raw` labels, diagnosis categories hold steady at 24 distinct values
+  for 2020–2025, then jump to 33 in 2026 (4 with no legacy spelling at all: Ear and Mastoid,
+  Hlth Factor/Contact, Malfor/Deform/Abnor, Sym/Sign Ab Find). On the canonical
+  post-crosswalk column the axis holds at 21 labels every year 2020–2026 with exactly one
+  genuinely new 2026 label, Ear and Mastoid (`docs/evals/eda.md` § Diagnosis category
+  vocabulary by era is computed on the canonical column).
   Treatment categories are worse: only 2 of 31 legacy labels have a confident 2026
   counterpart (OQ-1.2) — the new treatment vocabulary reads as CPT/HCPCS section names,
   not a renamed version of the old scheme, so treatment-category trends still fracture at
