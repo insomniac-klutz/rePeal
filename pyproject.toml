@@ -5,7 +5,12 @@ description = "Appeals intelligence over public external-review data"
 readme = "README.md"
 license = "Apache-2.0"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "pandera>=0.33.1",
+    "polars>=1.44.2",
+    "pyyaml>=6.0.3",
+    "requests>=2.34.2",
+]
 
 [project.scripts]
 repeal = "repeal:main"

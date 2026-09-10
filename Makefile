@@ -1,4 +1,4 @@
-.PHONY: setup test lint fmt ingest annotate extract index train eval serve demo
+.PHONY: setup test lint fmt ingest check-upstream eda annotate extract index train eval serve demo
 
 NOT_IMPL = @echo "not implemented until its phase — see TODO.md" && exit 1
 
@@ -16,7 +16,13 @@ fmt:
 	uv run ruff check --fix .
 
 ingest:
-	$(NOT_IMPL)
+	uv run python -m repeal.ingest.run
+
+check-upstream:
+	uv run python -m repeal.ingest.download --check-upstream
+
+eda:
+	uv run python -m repeal.ingest.profile --parquet data/interim/imr_cases.parquet --out docs/evals/eda.md
 
 annotate:
 	$(NOT_IMPL)
