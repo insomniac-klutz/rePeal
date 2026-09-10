@@ -164,7 +164,7 @@ DuckDB schema + loaders. Hybrid retrieval (BM25 + dense; rerank optional). **Aut
 **DoD:** hybrid ≥ each single method on the judged set; indexes rebuild reproducibly via `make index`; and Recall@10 ≥ 0.70 on the judged set or an OQ ruling + gap analysis.
 
 ### Phase 5 — Overturn predictor
-Baselines in strict order: majority class → logreg(structured fields) → logreg(TF-IDF **scrubbed** text — doubles as leakage sentinel) → LightGBM(structured + extracted features) → LLM few-shot with retrieved precedents (small eval subset only, for cost). **Temporal split** (train ≤ cutoff year, test after) to mimic deployment; **the cutoff year is fixed during Phase 1 EDA via OQ ruling (OQ-1.5)** (working proposal: train ≤ 2021, test 2022+) and not re-tuned afterwards. Report AUC/PR, reliability plot, ECE, SHAP top drivers. Write model card with selection-bias caveats per OQ-0.1.
+Baselines in strict order: majority class → logreg(structured fields) → logreg(TF-IDF **scrubbed** text — doubles as leakage sentinel) → LightGBM(structured + extracted features) → LLM few-shot with retrieved precedents (small eval subset only, for cost). **Temporal split** (train ≤ cutoff year, test after) to mimic deployment; **the cutoff year is fixed during Phase 1 EDA via OQ ruling (OQ-1.5)** — ruled 2026-09-10 and frozen: train ≤ 2021, test 2022–2025, 2001 and 2026 excluded from both windows (candidate table in `docs/evals/eda.md`) — and not re-tuned afterwards. Report AUC/PR, reliability plot, ECE, SHAP top drivers. Write model card with selection-bias caveats per OQ-0.1.
 **DoD:** calibrated model card in `docs/evals/`; all baseline numbers in one table.
 
 ### Phase 6 — Grounded letter generation
