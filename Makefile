@@ -1,6 +1,7 @@
-.PHONY: setup test lint fmt ingest check-upstream eda annotate extract index train eval serve demo
+.PHONY: setup test lint fmt ingest check-upstream eda skeleton-sample skeleton annotate extract index train eval serve demo
 
 NOT_IMPL = @echo "not implemented until its phase — see TODO.md" && exit 1
+CASE ?=
 
 setup:
 	uv sync --group dev
@@ -23,6 +24,12 @@ check-upstream:
 
 eda:
 	uv run python -m repeal.ingest.profile --parquet data/interim/imr_cases.parquet --out docs/evals/eda.md
+
+skeleton-sample:
+	uv run python -m repeal.skeleton.cards --sample
+
+skeleton:
+	uv run python -m repeal.skeleton.run $(if $(CASE),--case $(CASE),)
 
 annotate:
 	$(NOT_IMPL)
